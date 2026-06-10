@@ -33,5 +33,7 @@ export const STORAGE_KEYS = {
   cadence: "frame:cadence",
   profile: "frame:profile",
   videoStats: "frame:videoStats",
-  // future: goals, streak, ...
+  pathCompleted: "frame:pathCompleted",
+  activeDates: "frame:activeDates",
+  // future: goals, milestones, ...
 } as const;

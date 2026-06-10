@@ -6,10 +6,12 @@ import { Settings, Flame } from "lucide-react";
 import { navItems } from "@/lib/nav";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
+import { useStreak } from "@/lib/useStreak";
 
 /** Desktop-only left navigation. Hidden on phones. */
 export function Sidebar() {
   const pathname = usePathname();
+  const { streak } = useStreak();
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -49,12 +51,16 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-4 space-y-1 border-t border-hairline pt-4">
-        {/* Streak chip — wired to real data in Step 7 */}
+        {/* Streak chip */}
         <div className="mb-1 flex items-center gap-3 rounded-2xl bg-amber/10 px-3 py-2.5">
           <Flame className="h-5 w-5 shrink-0 text-amber" />
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-ink">0 day streak</p>
-            <p className="text-xs text-muted">Start today 🌱</p>
+            <p className="text-sm font-semibold text-ink">
+              {streak} day streak
+            </p>
+            <p className="text-xs text-muted">
+              {streak > 0 ? "Keep it going 🔥" : "Start today 🌱"}
+            </p>
           </div>
         </div>
         <Link
