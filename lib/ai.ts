@@ -1,10 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { BrandKit, ChannelToStudy } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
+import type { EditingSetup, ProductionPlan } from "./builder/types";
 import {
   sampleBrandKit,
   sampleChannels,
   samplePerformanceCoaching,
+  sampleProductionPlan,
 } from "./ai-samples";
 
 /**
@@ -142,5 +144,32 @@ Return ONLY a JSON array of 2-3 short strings — each a specific, encouraging t
   } catch (err) {
     console.error("[ai] coaching failed, using sample:", err);
     return samplePerformanceCoaching(stat);
+  }
+}
+
+/** Builds a full, step-by-step production plan for one video idea. */
+export async function getProductionPlan(
+  idea: string,
+  niche: string,
+  setup: EditingSetup,
+): Promise<ProductionPlan> {
+  if (!aiIsLive()) return sampleProductionPlan(idea, niche, setup);
+  try {
+    const text = await ask(
+      "You are a friendly producer helping a beginner YouTuber plan one video. Be concrete, encouraging, and easy to follow.",
+      `Plan a video. Niche: "${niche}". Idea: "${idea}".
+The creator edits with "${setup.software}" on ${setup.device === "mobile" ? "their phone" : "a computer"} — make the editChecklist specific to that.
+Return ONLY a JSON object shaped exactly like:
+{"hooks":[string,string,string],"titles":[string,string,string],"scriptOutline":[string,...],"shotList":[string,...],"bRoll":[string,...],"sound":[string,...],"editChecklist":[string,...],"publishChecklist":[string,...]}
+Keep each array to 3-6 short, practical items.`,
+    );
+    const plan = parseJSON<ProductionPlan>(text);
+    if (plan && Array.isArray(plan.hooks) && Array.isArray(plan.editChecklist)) {
+      return plan;
+    }
+    return sampleProductionPlan(idea, niche, setup);
+  } catch (err) {
+    console.error("[ai] production plan failed, using sample:", err);
+    return sampleProductionPlan(idea, niche, setup);
   }
 }

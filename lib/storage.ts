@@ -35,5 +35,7 @@ export const STORAGE_KEYS = {
   videoStats: "frame:videoStats",
   pathCompleted: "frame:pathCompleted",
   activeDates: "frame:activeDates",
-  // future: goals, milestones, ...
+  videoProjects: "frame:videoProjects",
+  editingSetup: "frame:editingSetup",
+  // future: goals, milestones, ideas, ...
 } as const;
