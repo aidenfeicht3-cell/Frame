@@ -31,5 +31,6 @@ export function writeJSON<T>(key: string, value: T): void {
 export const STORAGE_KEYS = {
   scheduledPosts: "frame:scheduledPosts",
   cadence: "frame:cadence",
-  // future: brandKit, goals, videos, streak, ...
+  profile: "frame:profile",
+  // future: goals, videos, streak, ...
 } as const;
