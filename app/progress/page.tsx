@@ -11,11 +11,13 @@ import {
   Sparkles,
   Loader2,
   Link2,
+  TrendingUp,
+  TrendingDown,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { ViewsChart } from "@/components/analytics/ViewsChart";
+import { ViewsLineChart } from "@/components/analytics/ViewsLineChart";
 import { LogVideoSheet } from "@/components/analytics/LogVideoSheet";
 import { useAnalytics } from "@/lib/analytics/useAnalytics";
 import { formatShort } from "@/lib/calendar/dates";
@@ -115,16 +117,31 @@ export default function ProgressPage() {
             <Stat icon={Gauge} value={`${avgRetention}%`} label="Avg retention" tint="success" />
           </div>
 
-          {/* Chart */}
+          {/* Views over time */}
           {sorted.length >= 2 && (
             <Card className="space-y-3">
-              <h2 className="font-display text-base font-bold">Views per video</h2>
-              <ViewsChart
-                data={sorted.slice(-6).map((v) => ({
+              <div className="flex items-center justify-between">
+                <h2 className="font-display text-base font-bold">
+                  Views over time
+                </h2>
+                <GrowthBadge
+                  net={sorted[sorted.length - 1].views - sorted[0].views}
+                />
+              </div>
+              <ViewsLineChart
+                data={sorted.slice(-12).map((v) => ({
                   label: shortDate(v.date),
                   value: v.views,
                 }))}
               />
+              <div className="flex items-center gap-4 text-[11px] text-muted">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-amber" /> best video
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-brand-500" /> each video
+                </span>
+              </div>
             </Card>
           )}
 
@@ -201,7 +218,8 @@ export default function ProgressPage() {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold">Connect your channel</p>
           <p className="text-xs text-muted">
-            Auto-pull real views &amp; retention — coming once accounts are set up.
+            Graph your real daily views &amp; subscriber growth — every peak and
+            drop. Coming once accounts are set up.
           </p>
         </div>
         <span className="shrink-0 rounded-full bg-paper px-2.5 py-1 text-[11px] font-semibold text-muted">
@@ -304,6 +322,26 @@ function AiBadge({ live }: { live: boolean | null }) {
         className={cn("h-1.5 w-1.5 rounded-full", live ? "bg-success" : "bg-amber")}
       />
       {live ? "Live AI" : "Sample AI"}
+    </span>
+  );
+}
+
+function GrowthBadge({ net }: { net: number }) {
+  const up = net >= 0;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+        up ? "bg-success/10 text-success" : "bg-coral/10 text-coral",
+      )}
+    >
+      {up ? (
+        <TrendingUp className="h-3.5 w-3.5" />
+      ) : (
+        <TrendingDown className="h-3.5 w-3.5" />
+      )}
+      {up ? "+" : "−"}
+      {fmt(Math.abs(net))}
     </span>
   );
 }
