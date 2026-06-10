@@ -1,4 +1,5 @@
 import type { BrandKit, ChannelToStudy } from "./ai-types";
+import type { VideoStat } from "./analytics/types";
 
 /**
  * Built-in sample answers used when there's NO Anthropic API key.
@@ -52,4 +53,41 @@ export function sampleChannels(niche: string): ChannelToStudy[] {
       searchUrl: search(`new ${n} channel`),
     },
   ];
+}
+
+export function samplePerformanceCoaching(stat: VideoStat): string[] {
+  const tips: string[] = [];
+
+  // Retention is the biggest signal for a beginner.
+  if (stat.retentionPct > 0 && stat.retentionPct < 40) {
+    tips.push(
+      "Your hook is the biggest lever right now — open with the payoff in the first 5 seconds, then explain how you got there.",
+    );
+  } else if (stat.retentionPct >= 40) {
+    tips.push(
+      `Strong retention at ${Math.round(stat.retentionPct)}% — notice what kept people watching and do more of that next time.`,
+    );
+  } else {
+    tips.push(
+      "Add your retention % next time (YouTube Studio → Analytics) — it's the single best number for improving your hooks.",
+    );
+  }
+
+  // Likes relative to views = how much it resonated.
+  const likeRate = stat.views ? (stat.likes / stat.views) * 100 : 0;
+  if (likeRate < 3) {
+    tips.push(
+      "Ask for the like at a natural high point — right after you deliver something useful, not at the very start.",
+    );
+  } else {
+    tips.push(
+      "People are engaging well — add one clear 'subscribe for [the next thing]' so they come back.",
+    );
+  }
+
+  tips.push(
+    `Reuse what worked: keep the title pattern from "${stat.title}" and change only the topic for your next video.`,
+  );
+
+  return tips.slice(0, 3);
 }

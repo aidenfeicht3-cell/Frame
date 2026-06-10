@@ -55,6 +55,15 @@ export function formatShort(iso: string): string {
   });
 }
 
+/** "14:30" -> "2:30 PM". Returns "" for missing/invalid input. */
+export function formatTime(time?: string): string {
+  if (!time || !/^\d{1,2}:\d{2}$/.test(time)) return "";
+  const [h, m] = time.split(":").map(Number);
+  const period = h < 12 ? "AM" : "PM";
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12}:${String(m).padStart(2, "0")} ${period}`;
+}
+
 /**
  * 42 dates (6 weeks) for a month view, starting on the Sunday on/before the
  * 1st. Includes the leading/trailing days from neighbouring months so the

@@ -5,7 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Sheet } from "@/components/ui/Sheet";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
-import { formatLong } from "@/lib/calendar/dates";
+import { formatLong, formatTime } from "@/lib/calendar/dates";
 import {
   STATUS_META,
   STATUS_ORDER,
@@ -31,20 +31,28 @@ export function DayEditor({
 }) {
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState<PostStatus>("planned");
+  const [time, setTime] = useState("");
 
   const open = dateIso !== null;
   const dayPosts = dateIso ? posts.filter((p) => p.date === dateIso) : [];
 
   const handleAdd = () => {
     if (!dateIso) return;
-    onAdd({ date: dateIso, title: title.trim() || "Untitled video", status });
+    onAdd({
+      date: dateIso,
+      title: title.trim() || "Untitled video",
+      status,
+      time: time || undefined,
+    });
     setTitle("");
     setStatus("planned");
+    setTime("");
   };
 
   const close = () => {
     setTitle("");
     setStatus("planned");
+    setTime("");
     onClose();
   };
 
@@ -58,7 +66,14 @@ export function DayEditor({
               className="rounded-2xl border border-hairline bg-paper/50 p-3"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-semibold text-ink">{p.title}</p>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-ink">
+                    {p.title}
+                  </p>
+                  {p.time && (
+                    <p className="text-xs text-muted">{formatTime(p.time)}</p>
+                  )}
+                </div>
                 <button
                   type="button"
                   onClick={() => onRemove(p.id)}
@@ -104,6 +119,15 @@ export function DayEditor({
           placeholder="Video title or idea…"
           className="w-full rounded-2xl border border-hairline bg-surface px-4 py-3 text-sm outline-none transition-colors focus-visible:border-brand-300 focus-visible:ring-2 focus-visible:ring-brand-500"
         />
+        <label className="flex items-center justify-between gap-2 text-sm text-muted">
+          <span className="shrink-0">Time (optional)</span>
+          <input
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            className="rounded-xl border border-hairline bg-surface px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+          />
+        </label>
         <div className="flex flex-wrap gap-1.5">
           {STATUS_ORDER.map((s) => (
             <button

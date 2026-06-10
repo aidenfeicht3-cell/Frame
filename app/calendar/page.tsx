@@ -16,6 +16,7 @@ import { useCalendar } from "@/lib/calendar/useCalendar";
 import {
   MONTH_LABELS,
   formatShort,
+  formatTime,
   monthGrid,
   toISODate,
 } from "@/lib/calendar/dates";
@@ -52,11 +53,16 @@ export default function CalendarPage() {
     setMonth(now.getMonth());
   };
 
-  // Next upcoming video that isn't published yet — our in-app "reminder".
+  // Upcoming videos that aren't published yet, soonest first (by date, then time).
   // TODO: real push/email reminders need the backend + notifications.
-  const nextUp = cal.posts
+  const upcoming = cal.posts
     .filter((p) => p.status !== "published" && p.date >= todayIso)
-    .sort((a, b) => a.date.localeCompare(b.date))[0];
+    .sort((a, b) =>
+      a.date === b.date
+        ? (a.time ?? "").localeCompare(b.time ?? "")
+        : a.date.localeCompare(b.date),
+    );
+  const nextUp = upcoming[0];
 
   const ymPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
   const monthCount = cal.posts.filter((p) => p.date.startsWith(ymPrefix)).length;
@@ -171,6 +177,46 @@ export default function CalendarPage() {
               ))}
             </div>
           </Card>
+
+          {/* Upcoming list */}
+          {upcoming.length > 0 && (
+            <Card className="space-y-3">
+              <h2 className="font-display text-base font-bold">Upcoming</h2>
+              <ul className="space-y-2">
+                {upcoming.slice(0, 6).map((p) => (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelected(p.date)}
+                      className="flex w-full items-center gap-3 rounded-2xl border border-hairline bg-paper/40 p-3 text-left transition-colors hover:bg-paper"
+                    >
+                      <span
+                        className={cn(
+                          "h-2 w-2 shrink-0 rounded-full",
+                          STATUS_META[p.status].dot,
+                        )}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold">{p.title}</p>
+                        <p className="text-xs text-muted">
+                          {formatShort(p.date)}
+                          {p.time ? ` · ${formatTime(p.time)}` : ""}
+                        </p>
+                      </div>
+                      <span
+                        className={cn(
+                          "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+                          STATUS_META[p.status].chip,
+                        )}
+                      >
+                        {STATUS_META[p.status].label}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
 
           {/* Cadence */}
           <CadenceCard

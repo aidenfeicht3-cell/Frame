@@ -32,5 +32,6 @@ export const STORAGE_KEYS = {
   scheduledPosts: "frame:scheduledPosts",
   cadence: "frame:cadence",
   profile: "frame:profile",
-  // future: goals, videos, streak, ...
+  videoStats: "frame:videoStats",
+  // future: goals, streak, ...
 } as const;

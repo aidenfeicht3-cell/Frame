@@ -2,7 +2,8 @@ export type PostStatus = "planned" | "in_progress" | "published";
 
 export type ScheduledPost = {
   id: string;
-  date: string; // ISO date "yyyy-mm-dd" (local day, no time)
+  date: string; // ISO date "yyyy-mm-dd" (local day)
+  time?: string; // optional "HH:MM" (24h)
   title: string;
   status: PostStatus;
   note?: string;

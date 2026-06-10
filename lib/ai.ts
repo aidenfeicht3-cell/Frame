@@ -1,6 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { BrandKit, ChannelToStudy } from "./ai-types";
-import { sampleBrandKit, sampleChannels } from "./ai-samples";
+import type { VideoStat } from "./analytics/types";
+import {
+  sampleBrandKit,
+  sampleChannels,
+  samplePerformanceCoaching,
+} from "./ai-samples";
 
 /**
  * THE single place all Anthropic AI calls live.
@@ -105,5 +110,37 @@ The niche is: "${niche}".`,
   } catch (err) {
     console.error("[ai] channels failed, using sample:", err);
     return sampleChannels(niche);
+  }
+}
+
+/** Reads a video's numbers and returns 2-3 encouraging, specific next-video tips. */
+export async function getPerformanceCoaching(
+  input: Partial<VideoStat>,
+): Promise<string[]> {
+  const stat: VideoStat = {
+    id: "",
+    title: String(input.title ?? "your video"),
+    date: String(input.date ?? ""),
+    views: Number(input.views) || 0,
+    likes: Number(input.likes) || 0,
+    comments: Number(input.comments) || 0,
+    retentionPct: Number(input.retentionPct) || 0,
+  };
+
+  if (!aiIsLive()) return samplePerformanceCoaching(stat);
+  try {
+    const text = await ask(
+      "You are a warm, encouraging YouTube coach for a nervous beginner. Be specific and practical. Never guilt-trip; always point to the next action.",
+      `A video titled "${stat.title}" got ${stat.views} views, ${stat.likes} likes, ${stat.comments} comments, and ${stat.retentionPct}% average retention.
+Return ONLY a JSON array of 2-3 short strings — each a specific, encouraging tip for making the NEXT video better.`,
+    );
+    const tips = parseJSON<string[]>(text);
+    if (Array.isArray(tips) && tips.length) {
+      return tips.slice(0, 3).map((t) => String(t));
+    }
+    return samplePerformanceCoaching(stat);
+  } catch (err) {
+    console.error("[ai] coaching failed, using sample:", err);
+    return samplePerformanceCoaching(stat);
   }
 }
