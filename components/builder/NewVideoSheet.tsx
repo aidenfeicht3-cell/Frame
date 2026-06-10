@@ -16,6 +16,7 @@ export function NewVideoSheet({
   niche,
   setup,
   loading,
+  initialIdea,
   onClose,
   onGenerate,
 }: {
@@ -23,6 +24,7 @@ export function NewVideoSheet({
   niche: string;
   setup: EditingSetup;
   loading: boolean;
+  initialIdea?: string;
   onClose: () => void;
   onGenerate: (idea: string, setup: EditingSetup) => void;
 }) {
@@ -32,11 +34,11 @@ export function NewVideoSheet({
 
   useEffect(() => {
     if (open) {
-      setIdea("");
+      setIdea(initialIdea ?? "");
       setSoftware(setup.software);
       setDevice(setup.device);
     }
-  }, [open, setup.software, setup.device]);
+  }, [open, initialIdea, setup.software, setup.device]);
 
   const n = niche.trim() || "your topic";
   const suggestions = [

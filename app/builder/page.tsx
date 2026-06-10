@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Plus,
   ArrowLeft,
@@ -10,6 +11,8 @@ import {
   Clapperboard,
   PartyPopper,
   Scissors,
+  Wand2,
+  Lightbulb,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -17,6 +20,7 @@ import { NewVideoSheet } from "@/components/builder/NewVideoSheet";
 import { useBuilder } from "@/lib/builder/useBuilder";
 import { useProfile } from "@/lib/profile/useProfile";
 import { markActiveToday } from "@/lib/streak";
+import { celebrate } from "@/lib/celebrate";
 import { BUILDER_STEPS, type EditingSetup, type VideoProject } from "@/lib/builder/types";
 import { cn } from "@/lib/cn";
 
@@ -29,6 +33,7 @@ export default function BuilderPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [live, setLive] = useState<boolean | null>(null);
+  const [initialIdea, setInitialIdea] = useState("");
 
   useEffect(() => {
     fetch("/api/ai-status")
@@ -36,6 +41,21 @@ export default function BuilderPage() {
       .then((d) => setLive(Boolean(d.live)))
       .catch(() => setLive(false));
   }, []);
+
+  // Opened from the Idea vault or Title tester via /builder?idea=...
+  useEffect(() => {
+    const idea = new URLSearchParams(window.location.search).get("idea");
+    if (idea) {
+      setInitialIdea(idea);
+      setSheetOpen(true);
+      window.history.replaceState(null, "", "/builder");
+    }
+  }, []);
+
+  const openNew = () => {
+    setInitialIdea("");
+    setSheetOpen(true);
+  };
 
   const selected = builder.projects.find((p) => p.id === selectedId) ?? null;
 
@@ -49,6 +69,7 @@ export default function BuilderPage() {
       }).then((r) => r.json());
       const id = builder.createProject(idea, setup, plan);
       setSheetOpen(false);
+      setInitialIdea("");
       setSelectedId(id);
     } finally {
       setGenerating(false);
@@ -66,7 +87,10 @@ export default function BuilderPage() {
         onBack={() => setSelectedId(null)}
         onComplete={(stepId) => {
           builder.completeStep(selected.id, stepId);
-          if (stepId === "publish") markActiveToday(); // publishing = an active day
+          if (stepId === "publish") {
+            markActiveToday(); // publishing = an active day
+            celebrate("Published! 🎉 Most people never do — you did.");
+          }
         }}
         onDelete={() => {
           builder.removeProject(selected.id);
@@ -88,11 +112,33 @@ export default function BuilderPage() {
           </p>
         </div>
         {builder.projects.length > 0 && (
-          <Button onClick={() => setSheetOpen(true)} className="shrink-0">
+          <Button onClick={openNew} className="shrink-0">
             <Plus className="h-4 w-4" /> New
           </Button>
         )}
       </header>
+
+      {/* Quick tools */}
+      <div className="grid grid-cols-2 gap-3">
+        <Link
+          href="/title-tester"
+          className="flex items-center gap-2 rounded-2xl border border-hairline bg-surface p-3 text-sm font-semibold shadow-card transition-colors hover:bg-paper"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
+            <Wand2 className="h-4 w-4" />
+          </span>
+          Title tester
+        </Link>
+        <Link
+          href="/ideas"
+          className="flex items-center gap-2 rounded-2xl border border-hairline bg-surface p-3 text-sm font-semibold shadow-card transition-colors hover:bg-paper"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600">
+            <Lightbulb className="h-4 w-4" />
+          </span>
+          Idea vault
+        </Link>
+      </div>
 
       {builder.projects.length === 0 ? (
         <Card className="flex flex-col items-center py-10 text-center">
@@ -103,7 +149,7 @@ export default function BuilderPage() {
             Pick an idea and we&apos;ll build your whole production plan —
             revealed one calm step at a time.
           </p>
-          <Button onClick={() => setSheetOpen(true)} className="mt-4">
+          <Button onClick={openNew} className="mt-4">
             <Plus className="h-4 w-4" /> Plan a video
           </Button>
         </Card>
@@ -147,7 +193,13 @@ export default function BuilderPage() {
         niche={niche}
         setup={builder.editingSetup}
         loading={generating}
-        onClose={() => !generating && setSheetOpen(false)}
+        initialIdea={initialIdea}
+        onClose={() => {
+          if (!generating) {
+            setSheetOpen(false);
+            setInitialIdea("");
+          }
+        }}
         onGenerate={handleGenerate}
       />
 

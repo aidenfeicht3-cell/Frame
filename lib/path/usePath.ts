@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getCompleted, saveCompleted } from "./store";
 import { SEASON1_LEVELS } from "./curriculum";
 import { markActiveToday } from "@/lib/streak";
+import { celebrate } from "@/lib/celebrate";
 
 /**
  * Drives the Path: which levels are done, which is current, which are locked.
@@ -36,10 +37,18 @@ export function usePath() {
     return idx > currentIndex;
   };
 
-  const complete = useCallback((id: string) => {
-    setCompleted((prev) => (prev.includes(id) ? prev : [...prev, id]));
-    markActiveToday();
-  }, []);
+  const complete = useCallback(
+    (id: string) => {
+      if (completed.includes(id)) return;
+      const willFinishSeason = completed.length + 1 === levels.length;
+      setCompleted((prev) => (prev.includes(id) ? prev : [...prev, id]));
+      markActiveToday();
+      celebrate(
+        willFinishSeason ? "Season 1 complete! 🎉" : "Step done — nice! 🔥",
+      );
+    },
+    [completed, levels.length],
+  );
 
   return {
     loaded,

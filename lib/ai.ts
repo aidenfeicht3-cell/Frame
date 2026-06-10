@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { BrandKit, ChannelToStudy } from "./ai-types";
+import type { BrandKit, ChannelToStudy, TitleRating } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
 import type { EditingSetup, ProductionPlan } from "./builder/types";
 import {
@@ -7,6 +7,7 @@ import {
   sampleChannels,
   samplePerformanceCoaching,
   sampleProductionPlan,
+  sampleTitleRating,
 } from "./ai-samples";
 
 /**
@@ -171,5 +172,30 @@ Keep each array to 3-6 short, practical items.`,
   } catch (err) {
     console.error("[ai] production plan failed, using sample:", err);
     return sampleProductionPlan(idea, niche, setup);
+  }
+}
+
+/** Rates a hook/title 1-10 and suggests stronger rewrites. */
+export async function getTitleRating(text: string): Promise<TitleRating> {
+  if (!aiIsLive()) return sampleTitleRating(text);
+  try {
+    const out = await ask(
+      "You are a YouTube title/hook expert helping a beginner. Be honest but encouraging.",
+      `Rate this video title or hook for click-appeal and suggest stronger versions.
+Title/hook: "${text}"
+Return ONLY a JSON object: {"score": number 1-10, "verdict": one short sentence, "rewrites": [2-3 stronger versions as strings]}`,
+    );
+    const r = parseJSON<TitleRating>(out);
+    if (typeof r.score === "number" && Array.isArray(r.rewrites)) {
+      return {
+        score: Math.max(1, Math.min(10, Math.round(r.score))),
+        verdict: String(r.verdict ?? ""),
+        rewrites: r.rewrites.slice(0, 3).map((s) => String(s)),
+      };
+    }
+    return sampleTitleRating(text);
+  } catch (err) {
+    console.error("[ai] title rating failed, using sample:", err);
+    return sampleTitleRating(text);
   }
 }

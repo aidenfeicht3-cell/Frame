@@ -37,5 +37,7 @@ export const STORAGE_KEYS = {
   activeDates: "frame:activeDates",
   videoProjects: "frame:videoProjects",
   editingSetup: "frame:editingSetup",
-  // future: goals, milestones, ideas, ...
+  ideas: "frame:ideas",
+  milestones: "frame:milestones",
+  // future: goals, ...
 } as const;

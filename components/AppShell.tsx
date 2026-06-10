@@ -1,6 +1,7 @@
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
+import { Celebration } from "./Celebration";
 
 /**
  * The frame around every screen.
@@ -19,6 +20,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
       <BottomNav />
+      <Celebration />
     </div>
   );
 }

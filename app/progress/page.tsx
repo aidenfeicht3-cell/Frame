@@ -11,6 +11,7 @@ import {
   Sparkles,
   Loader2,
   Link2,
+  Target,
   TrendingUp,
   TrendingDown,
   type LucideIcon,
@@ -19,19 +20,26 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ViewsLineChart } from "@/components/analytics/ViewsLineChart";
 import { LogVideoSheet } from "@/components/analytics/LogVideoSheet";
+import { MilestoneSheet } from "@/components/analytics/MilestoneSheet";
 import { useAnalytics } from "@/lib/analytics/useAnalytics";
+import { useMilestones } from "@/lib/milestones/useMilestones";
+import { celebrate } from "@/lib/celebrate";
 import { formatShort } from "@/lib/calendar/dates";
 import type { VideoStat } from "@/lib/analytics/types";
+import type { Milestone } from "@/lib/milestones/types";
 import { cn } from "@/lib/cn";
 
 export default function ProgressPage() {
   const { loaded, videos, addVideo, updateVideo, removeVideo } = useAnalytics();
+  const ms = useMilestones();
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState<VideoStat | null>(null);
   const [coaching, setCoaching] = useState<Record<string, string[]>>({});
   const [coachLoading, setCoachLoading] = useState<Record<string, boolean>>({});
   const [live, setLive] = useState<boolean | null>(null);
+  const [msSheetOpen, setMsSheetOpen] = useState(false);
+  const [editingMs, setEditingMs] = useState<Milestone | null>(null);
 
   useEffect(() => {
     fetch("/api/ai-status")
@@ -59,6 +67,26 @@ export default function ProgressPage() {
     else addVideo(data);
     setSheetOpen(false);
     setEditing(null);
+  };
+
+  const saveMs = (data: { label: string; target: number; current: number }) => {
+    if (editingMs) {
+      const wasReached = editingMs.current >= editingMs.target;
+      ms.updateMilestone(editingMs.id, data);
+      if (!wasReached && data.current >= data.target) celebrate("Goal reached! 🎉");
+    } else {
+      ms.addMilestone(data.label, data.target, data.current);
+      if (data.current >= data.target) celebrate("Goal reached! 🎉");
+    }
+    setMsSheetOpen(false);
+    setEditingMs(null);
+  };
+
+  const bumpMs = (m: Milestone, delta: number) => {
+    const next = Math.max(0, m.current + delta);
+    const wasReached = m.current >= m.target;
+    ms.updateMilestone(m.id, { current: next });
+    if (!wasReached && next >= m.target) celebrate("Goal reached! 🎉");
   };
 
   const coach = async (v: VideoStat) => {
@@ -210,6 +238,118 @@ export default function ProgressPage() {
         </>
       )}
 
+      {/* Milestones */}
+      {ms.loaded && (
+        <Card className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="flex items-center gap-1.5 font-display text-base font-bold">
+              <Target className="h-4 w-4 text-brand-600" /> Milestones
+            </h2>
+            <button
+              type="button"
+              onClick={() => {
+                setEditingMs(null);
+                setMsSheetOpen(true);
+              }}
+              aria-label="Add goal"
+              className="grid h-8 w-8 place-items-center rounded-full bg-brand-50 text-brand-600 transition-colors hover:bg-brand-100"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+
+          {ms.milestones.length === 0 ? (
+            <div className="space-y-3">
+              <p className="text-sm text-muted">
+                Set a target to aim for — we&apos;ll cheer when you hit it.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => ms.addMilestone("Publish 5 videos", 5)}
+                  className="rounded-full bg-paper px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-hairline"
+                >
+                  + Publish 5 videos
+                </button>
+                <button
+                  type="button"
+                  onClick={() => ms.addMilestone("Reach 100 subscribers", 100)}
+                  className="rounded-full bg-paper px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-hairline"
+                >
+                  + Reach 100 subs
+                </button>
+              </div>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {ms.milestones.map((m) => {
+                const pct = Math.min(
+                  100,
+                  Math.round((m.current / m.target) * 100),
+                );
+                const done = m.current >= m.target;
+                return (
+                  <li
+                    key={m.id}
+                    className="rounded-2xl border border-hairline bg-paper/40 p-3"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="flex items-center gap-1.5 truncate text-sm font-semibold">
+                        {done && <span>🏆</span>}
+                        {m.label}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingMs(m);
+                          setMsSheetOpen(true);
+                        }}
+                        aria-label="Edit goal"
+                        className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-ink"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-hairline">
+                      <div
+                        className={cn(
+                          "h-full rounded-full transition-all",
+                          done ? "bg-success" : "bg-brand-500",
+                        )}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted">
+                        {fmt(m.current)} / {fmt(m.target)} · {pct}%
+                      </span>
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => bumpMs(m, -1)}
+                          aria-label="Decrease"
+                          className="grid h-7 w-7 place-items-center rounded-lg bg-surface text-base text-muted transition-colors hover:text-ink"
+                        >
+                          −
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => bumpMs(m, 1)}
+                          aria-label="Increase"
+                          className="grid h-7 w-7 place-items-center rounded-lg bg-surface text-base text-muted transition-colors hover:text-ink"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </Card>
+      )}
+
       {/* Connect channel — coming soon (real YouTube data after backend) */}
       <Card className="flex items-center gap-3 border-dashed">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-paper text-muted">
@@ -235,6 +375,25 @@ export default function ProgressPage() {
           setEditing(null);
         }}
         onSave={onSave}
+      />
+
+      <MilestoneSheet
+        open={msSheetOpen}
+        editing={editingMs}
+        onClose={() => {
+          setMsSheetOpen(false);
+          setEditingMs(null);
+        }}
+        onSave={saveMs}
+        onDelete={
+          editingMs
+            ? () => {
+                ms.removeMilestone(editingMs.id);
+                setMsSheetOpen(false);
+                setEditingMs(null);
+              }
+            : undefined
+        }
       />
     </div>
   );

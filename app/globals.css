@@ -2,18 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* These CSS variables mirror the Tailwind colors so we can also use them
-   inside gradients and inline styles when needed. */
+/* Structural colours as RGB triplets (space-separated for Tailwind's
+   <alpha-value>). Light values here; .dark overrides them below. */
 :root {
-  --paper: #f1eff8;
-  --surface: #ffffff;
-  --ink: #1b1530;
-  --muted: #8a85a0;
-  --hairline: #e7e3f2;
-  --coral: #ff5a5f;
-  --indigo: #5a4fe0;
-  --amber: #ff9d2e;
-  --success: #10b981;
+  --c-paper: 241 239 248; /* #F1EFF8 */
+  --c-surface: 255 255 255; /* #FFFFFF */
+  --c-ink: 27 21 48; /* #1B1530 */
+  --c-muted: 138 133 160; /* #8A85A0 */
+  --c-hairline: 231 227 242; /* #E7E3F2 */
+  --c-brand-50: 238 240 254; /* #EEF0FE */
+  --c-brand-100: 224 226 252; /* #E0E2FC */
+  --glow: 90 79 224; /* indigo, for the background wash */
+}
+
+.dark {
+  --c-paper: 16 14 26; /* deep navy-violet */
+  --c-surface: 30 27 46; /* raised surface */
+  --c-ink: 240 239 248; /* near-white text */
+  --c-muted: 157 151 180; /* secondary text */
+  --c-hairline: 46 41 66; /* subtle borders */
+  --c-brand-50: 36 31 64; /* dark indigo tint (replaces the light chip bg) */
+  --c-brand-100: 46 39 84;
+  --glow: 120 110 240;
 }
 
 @layer base {
@@ -25,17 +35,16 @@
 
   body {
     @apply bg-paper text-ink font-sans antialiased;
-    /* Soft, barely-there glow in the corners so the page feels warm and
-       crafted rather than a flat block of colour. */
+    /* Soft, barely-there glow in the corners. */
     background-image:
       radial-gradient(
         55rem 55rem at 100% -10%,
-        rgba(90, 79, 224, 0.06),
+        rgb(var(--glow) / 0.06),
         transparent 60%
       ),
       radial-gradient(
         48rem 48rem at -10% 5%,
-        rgba(90, 79, 224, 0.09),
+        rgb(var(--glow) / 0.09),
         transparent 55%
       );
     background-attachment: fixed;
@@ -50,12 +59,12 @@
   }
 
   ::selection {
-    background-color: rgba(90, 79, 224, 0.16);
-    color: var(--ink);
+    background-color: rgb(90 79 224 / 0.22);
+    color: rgb(var(--c-ink));
   }
 
   :focus-visible {
-    outline: 2px solid var(--indigo);
+    outline: 2px solid #5a4fe0;
     outline-offset: 2px;
     border-radius: 6px;
   }

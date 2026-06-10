@@ -1,12 +1,15 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Frame's design tokens live here.
- * These names (bg-paper, text-ink, bg-coral, ...) are used everywhere
- * so the whole app stays visually consistent. Change a value once here
- * and it updates across every screen.
+ * Frame's design tokens.
+ *
+ * The structural neutrals (paper, surface, ink, muted, hairline) and the two
+ * lightest brand tints are driven by CSS variables (see globals.css), so they
+ * flip automatically in dark mode. The accent colours (brand 200-900, coral,
+ * amber, success, indigo) are fixed — they read well on both themes.
  */
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -15,18 +18,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#F1EFF8", // soft lilac-grey app background
-        surface: "#FFFFFF", // cards and panels
-        ink: "#1B1530", // primary text
-        muted: "#8A85A0", // secondary text
-        hairline: "#E7E3F2", // thin borders / dividers
-        // Brand blue — Frame's signature colour, as a full tonal scale.
-        // Use brand-50/100 for soft tinted backgrounds, brand-600 for buttons,
-        // brand-700+ for deep accents. This is what makes the blue feel rich
-        // and intentional instead of one flat shade.
+        paper: "rgb(var(--c-paper) / <alpha-value>)",
+        surface: "rgb(var(--c-surface) / <alpha-value>)",
+        ink: "rgb(var(--c-ink) / <alpha-value>)",
+        muted: "rgb(var(--c-muted) / <alpha-value>)",
+        hairline: "rgb(var(--c-hairline) / <alpha-value>)",
         brand: {
-          50: "#EEF0FE",
-          100: "#E0E2FC",
+          50: "rgb(var(--c-brand-50) / <alpha-value>)",
+          100: "rgb(var(--c-brand-100) / <alpha-value>)",
           200: "#C5C7F8",
           300: "#A3A3F1",
           400: "#827CEA",
@@ -36,15 +35,13 @@ const config: Config = {
           800: "#332B8F",
           900: "#211C5E",
         },
-        indigo: "#5A4FE0", // alias of brand-500 (kept so older classes still work)
-        coral: "#FF5A5F", // warm spark — reserved for the logo's play button
-        amber: "#FF9D2E", // streak / achievement accent
-        success: "#10B981", // success states
+        indigo: "#5A4FE0",
+        coral: "#FF5A5F",
+        amber: "#FF9D2E",
+        success: "#10B981",
       },
       fontFamily: {
-        // Body text
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        // Headings only
         display: ["var(--font-bricolage)", "var(--font-inter)", "sans-serif"],
       },
       borderRadius: {
@@ -53,7 +50,6 @@ const config: Config = {
         "3xl": "24px",
       },
       boxShadow: {
-        // soft, layered shadows give surfaces a hand-crafted sense of depth
         soft: "0 2px 8px rgba(27,21,48,0.06), 0 10px 30px rgba(27,21,48,0.08)",
         card: "0 1px 2px rgba(27,21,48,0.04), 0 8px 24px rgba(27,21,48,0.06)",
         lift: "0 6px 16px rgba(27,21,48,0.08), 0 20px 44px rgba(27,21,48,0.12)",
@@ -68,10 +64,15 @@ const config: Config = {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "confetti-fall": {
+          "0%": { transform: "translateY(-12vh) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateY(110vh) rotate(720deg)", opacity: "0" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s cubic-bezier(0.22,1,0.36,1) both",
         "fade-in": "fade-in 0.4s ease both",
+        "confetti-fall": "confetti-fall 1.8s linear forwards",
       },
     },
   },

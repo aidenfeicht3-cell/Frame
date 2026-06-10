@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Flame, Settings } from "lucide-react";
 import { Logo } from "./Logo";
+import { ThemeToggle } from "./ThemeToggle";
 import { useStreak } from "@/lib/useStreak";
 
 /**
@@ -23,6 +24,7 @@ export function TopBar() {
           <Flame className="h-4 w-4" />
           {streak}
         </span>
+        <ThemeToggle />
         <Link
           href="/settings"
           aria-label="Settings"

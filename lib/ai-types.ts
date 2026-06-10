@@ -13,3 +13,9 @@ export type ChannelToStudy = {
   steal: string; // one concrete thing to borrow
   searchUrl: string; // a YouTube search link to find examples
 };
+
+export type TitleRating = {
+  score: number; // 1-10
+  verdict: string; // one-line take
+  rewrites: string[]; // 2-3 stronger versions
+};

@@ -1,4 +1,4 @@
-import type { BrandKit, ChannelToStudy } from "./ai-types";
+import type { BrandKit, ChannelToStudy, TitleRating } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
 import type { EditingSetup, ProductionPlan } from "./builder/types";
 
@@ -177,4 +177,37 @@ export function sampleProductionPlan(
       "Watch the first 10 seconds one last time — then hit publish. 🎉",
     ],
   };
+}
+
+const POWER_WORDS =
+  /(how|why|secret|mistake|stop|never|best|easy|fast|ultimate|beginner|honest|truth|tried|guide|simple)/;
+
+export function sampleTitleRating(text: string): TitleRating {
+  const t = text.trim();
+  const lower = t.toLowerCase();
+
+  let score = 5;
+  if (/\d/.test(t)) score += 1; // a number adds specificity
+  if (POWER_WORDS.test(lower)) score += 1; // curiosity / power word
+  if (t.length >= 20 && t.length <= 60) score += 1; // clickable length
+  if (t.length > 72) score -= 1; // too long for mobile
+  if (t.includes("?")) score += 1; // a question pulls curiosity
+  if (!t) score = 1;
+  score = Math.max(1, Math.min(10, score));
+
+  const verdict =
+    score >= 8
+      ? "Strong — this would make me click."
+      : score >= 6
+        ? "Decent — a small tweak could push it higher."
+        : "Needs work — let's make it pull people in.";
+
+  const base = t.replace(/[?.!]+$/, "") || "your topic";
+  const rewrites = [
+    `How to ${base.toLowerCase()} (the easy way)`,
+    `${base}: 5 mistakes beginners make`,
+    `I tried ${base.toLowerCase()} so you don't have to`,
+  ];
+
+  return { score, verdict, rewrites };
 }
