@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* These CSS variables mirror the Tailwind colors so we can also use them
+   inside gradients and inline styles when needed. */
+:root {
+  --paper: #f1eff8;
+  --surface: #ffffff;
+  --ink: #1b1530;
+  --muted: #8a85a0;
+  --hairline: #e7e3f2;
+  --coral: #ff5a5f;
+  --indigo: #5a4fe0;
+  --amber: #ff9d2e;
+  --success: #10b981;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    /* Soft, barely-there glow in the corners so the page feels warm and
+       crafted rather than a flat block of colour. */
+    background-image:
+      radial-gradient(
+        55rem 55rem at 100% -10%,
+        rgba(90, 79, 224, 0.06),
+        transparent 60%
+      ),
+      radial-gradient(
+        48rem 48rem at -10% 5%,
+        rgba(90, 79, 224, 0.09),
+        transparent 55%
+      );
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background-color: rgba(90, 79, 224, 0.16);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+/* Respect users who prefer less motion — keep the experience calm. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
