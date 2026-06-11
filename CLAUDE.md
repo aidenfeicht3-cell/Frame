@@ -102,10 +102,21 @@ Done: app shell + blue design + logo · Onboarding + AI brand kit + channels to
 study · The Path (Season 1) + streak · Calendar (scheduling, cadence, upcoming,
 time-of-day) · Progress (manual stats, views-over-time line chart, AI coaching,
 milestones) · Video Builder (editing-software & phone/computer aware) · Today
-(live data) · Hook & title tester · Idea vault · Dark mode · Confetti.
+(live data) · Hook & title tester · Idea vault · Dark mode · Confetti ·
+**Settings** (paste Anthropic key in-app → Live AI, edit brand kit / goal /
+editing setup / theme).
 
-Next core screens: **Thumbnail Studio**, **Asset Locker**, **Settings** (paste
-Anthropic key in-app + edit brand kit + editing setup). Backend-dependent (stub
-now): connect YouTube channel → live analytics, reply to comments (OAuth; every
-reply must require explicit user approval). Later extras: teleprompter, niche
-trend radar, batch planning, accountability nudge.
+**In-app Anthropic key (how it works):** the user pastes a key in Settings; it's
+saved to localStorage (`lib/settings/*`, key `frame:settings`) and POSTed to
+`/api/key`, which stores it in the server's process memory (`lib/runtime-key.ts`,
+never sent back to the browser). `lib/ai.ts` `resolveKey()` prefers the runtime
+key, then `ANTHROPIC_API_KEY`, then falls back to samples — so no AI call site
+changed. `<KeySync/>` (mounted in `AppShell`) re-POSTs the saved key on every
+load so it survives a dev-server restart. `/api/ai-status` now also returns
+`hasEnvKey` / `hasRuntimeKey`. TODO: for a real multi-instance/serverless deploy,
+move the key off a single process variable (per-request or a secured backend).
+
+Next core screens: **Thumbnail Studio**, **Asset Locker**. Backend-dependent
+(stub now): connect YouTube channel → live analytics, reply to comments (OAuth;
+every reply must require explicit user approval). Later extras: teleprompter,
+niche trend radar, batch planning, accountability nudge.

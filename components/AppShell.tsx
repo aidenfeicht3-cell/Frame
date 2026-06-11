@@ -2,6 +2,7 @@ import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
 import { Celebration } from "./Celebration";
+import { KeySync } from "./KeySync";
 
 /**
  * The frame around every screen.
@@ -21,6 +22,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       <BottomNav />
       <Celebration />
+      <KeySync />
     </div>
   );
 }

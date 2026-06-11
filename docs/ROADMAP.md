@@ -25,6 +25,10 @@
 - **Tools** — Hook & title tester; Idea vault (Plan-this → Builder).
 - **Celebration confetti** on step-complete / season-complete / publish /
   milestone.
+- **Settings** — paste your Anthropic key in-app to flip the whole app from
+  "Sample AI" → "Live AI" (the key is saved on your device and re-synced to the
+  server on every load, so it survives restarts); edit the brand kit
+  (name/niche/bio), goal & weekly time, editing software/device, and light/dark.
 
 ## 🔜 Next core screens (buildable now, sample data)
 
@@ -34,8 +38,6 @@
 - **Asset Locker** (per video) — suggested royalty-free music / SFX / b-roll with
   direct search/download links (Pixabay, Jamendo, Pexels). `// TODO` for a real
   music/footage API.
-- **Settings** — paste the Anthropic API key in-app (turns "Sample AI" → "Live
-  AI"), edit the brand kit, set the editing software/device, goal/cadence.
 
 ## 🔒 Needs the backend / accounts (stubbed in `lib/youtube.ts`)
 

@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { getRuntimeKey } from "./runtime-key";
 import type { BrandKit, ChannelToStudy, TitleRating } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
 import type { EditingSetup, ProductionPlan } from "./builder/types";
@@ -13,9 +14,11 @@ import {
 /**
  * THE single place all Anthropic AI calls live.
  *
- * - Reads the key from the ANTHROPIC_API_KEY environment variable.
- * - If there's NO key, every function returns built-in sample answers, so the
- *   whole app works with zero setup. Add a key in .env.local to go live.
+ * - Uses a key pasted into the app (Settings, see lib/runtime-key.ts) if there
+ *   is one, otherwise the ANTHROPIC_API_KEY environment variable.
+ * - If there's NO key either way, every function returns built-in sample
+ *   answers, so the whole app works with zero setup. Add a key in Settings (or
+ *   in .env.local) to go live.
  *
  * This file is server-only — it's imported by route handlers in app/api/*,
  * never by client components, so the key never reaches the browser.
@@ -27,14 +30,24 @@ import {
 // The user asked for the Sonnet family; this is the current Sonnet model.
 const MODEL = "claude-sonnet-4-6";
 
+/** The key in effect right now: an in-app key (Settings) wins over the env var. */
+function resolveKey(): string {
+  return getRuntimeKey() || process.env.ANTHROPIC_API_KEY || "";
+}
+
 export function aiIsLive(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+  return Boolean(resolveKey());
 }
 
 let client: Anthropic | null = null;
+let clientKey: string | null = null;
 function getClient(): Anthropic {
-  // Only constructed when a key exists (guarded by aiIsLive() at call sites).
-  if (!client) client = new Anthropic();
+  const key = resolveKey();
+  // Rebuild if the key changed (e.g. the user just pasted one in Settings).
+  if (!client || clientKey !== key) {
+    client = new Anthropic({ apiKey: key });
+    clientKey = key;
+  }
   return client;
 }
 
