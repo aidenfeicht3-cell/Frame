@@ -1,24 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ExternalLink, Loader2 } from "lucide-react";
+import { Check, Loader2, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Toggle } from "@/components/ui/Toggle";
 import { cn } from "@/lib/cn";
-import { celebrate } from "@/lib/celebrate";
 import { useTheme } from "@/lib/useTheme";
 import { useProfile } from "@/lib/profile/useProfile";
 import { GOAL_LABELS, type Goal } from "@/lib/profile/types";
-import { useSettings } from "@/lib/settings/useSettings";
-import { maskKey } from "@/lib/settings/store";
+import { useBilling } from "@/lib/billing/useBilling";
+import {
+  PRO_PRICE,
+  TRIAL_DAYS,
+  inTrial,
+  trialDaysLeft,
+} from "@/lib/billing/types";
 import {
   getEditingSetup,
   saveEditingSetup,
 } from "@/lib/builder/store";
 import { EDITING_SOFTWARE, type Device } from "@/lib/builder/types";
-
-type AiStatus = { live: boolean; hasEnvKey: boolean; hasRuntimeKey: boolean };
 
 const HOURS = [
   { label: "1–2 hrs", value: 2 },
@@ -35,11 +37,11 @@ export default function SettingsPage() {
           Settings
         </h1>
         <p className="text-sm text-muted">
-          Turn on real AI, and tweak anything you set up earlier.
+          Manage your plan, and tweak anything you set up earlier.
         </p>
       </header>
 
-      <AiKeyCard />
+      <BillingCard />
       <BrandKitCard />
       <GoalCard />
       <EditingCard />
@@ -49,160 +51,82 @@ export default function SettingsPage() {
   );
 }
 
-/* ------------------------------ Real AI -------------------------------- */
+/* ------------------------------ Billing -------------------------------- */
 
-function AiKeyCard() {
-  const { loaded, anthropicKey, hasKey, saveKey, clearKey } = useSettings();
-  const [status, setStatus] = useState<AiStatus | null>(null);
-  const [input, setInput] = useState("");
-  const [editing, setEditing] = useState(false);
-  const [showKey, setShowKey] = useState(false);
-  const [busy, setBusy] = useState(false);
+function BillingCard() {
+  const { loaded, billing, startTrial, cancel } = useBilling();
+  const isPro = billing.plan === "pro";
+  const daysLeft = trialDaysLeft(billing);
+  const trialing = inTrial(billing);
 
-  const refreshStatus = () => {
-    fetch("/api/ai-status")
-      .then((r) => r.json())
-      .then((d) => setStatus(d as AiStatus))
-      .catch(() => setStatus(null));
-  };
-  useEffect(refreshStatus, []);
-
-  const live = status?.live ?? false;
-  const showInput = editing || !hasKey;
-
-  const onSave = async () => {
-    if (!input.trim()) return;
-    setBusy(true);
-    try {
-      const nowLive = await saveKey(input);
-      refreshStatus();
-      setEditing(false);
-      setInput("");
-      setShowKey(false);
-      if (nowLive) celebrate("Real AI is on — your content is now generated live ✨");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const onRemove = async () => {
-    setBusy(true);
-    try {
-      await clearKey();
-      refreshStatus();
-      setEditing(false);
-    } finally {
-      setBusy(false);
-    }
-  };
+  const planLabel = isPro ? "Frame Pro" : "Free";
+  const statusText = !isPro
+    ? "Your first video, free"
+    : trialing
+      ? `Free trial — ${daysLeft} ${daysLeft === 1 ? "day" : "days"} left`
+      : `${PRO_PRICE}/month · active`;
 
   return (
     <SettingCard
-      emoji="✨"
-      title="Real AI"
-      desc="Paste your Anthropic key to generate live content instead of samples."
-      badge={status ? <AiBadge live={live} /> : null}
+      emoji="💳"
+      title="Your plan"
+      desc="Your subscription powers live AI on every video — no setup needed."
+      badge={
+        loaded ? (
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold",
+              isPro ? "bg-brand-600 text-white" : "bg-brand-50 text-brand-700",
+            )}
+          >
+            {isPro && <Sparkles className="h-3 w-3" />}
+            {planLabel}
+          </span>
+        ) : null
+      }
     >
-      {/* Already have a key saved, and not currently editing it */}
-      {hasKey && !showInput && (
+      {!loaded ? (
+        <div className="h-10 animate-pulse rounded-2xl bg-paper" />
+      ) : (
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-paper px-4 py-3">
-            <span className="font-mono text-sm text-ink">
-              {maskKey(anthropicKey)}
-            </span>
-            <span className="inline-flex items-center gap-1 text-xs font-semibold text-success">
-              <Check className="h-3.5 w-3.5" /> Saved on this device
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setEditing(true);
-                setInput("");
-              }}
-            >
-              Replace key
-            </Button>
-            <Button variant="ghost" onClick={onRemove} disabled={busy}>
-              Remove
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Entering / replacing a key */}
-      {showInput && (
-        <div className="space-y-3">
-          {status?.hasEnvKey && !hasKey && (
-            <p className="rounded-2xl bg-brand-50 px-4 py-2.5 text-xs text-brand-700">
-              AI is already live from an environment key. You can still paste a
-              personal key here to use instead.
-            </p>
-          )}
-          <div className="flex items-center gap-2 rounded-2xl border border-hairline bg-surface px-4 py-2.5 focus-within:border-brand-300 focus-within:ring-2 focus-within:ring-brand-500">
-            <input
-              type={showKey ? "text" : "password"}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onSave();
-              }}
-              placeholder="sk-ant-…"
-              autoComplete="off"
-              spellCheck={false}
-              className="w-full bg-transparent font-mono text-sm outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => setShowKey((s) => !s)}
-              className="shrink-0 text-xs font-semibold text-muted hover:text-ink"
-            >
-              {showKey ? "Hide" : "Show"}
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={onSave} disabled={!input.trim() || busy}>
-              {busy ? (
-                <>
-                  Saving… <Loader2 className="h-4 w-4 animate-spin" />
-                </>
-              ) : (
-                <>
-                  Save key <Check className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-            {editing && (
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setEditing(false);
-                  setInput("");
-                  setShowKey(false);
-                }}
-              >
-                Cancel
-              </Button>
+            <div>
+              <p className="text-sm font-semibold">{planLabel}</p>
+              <p className="text-xs text-muted">{statusText}</p>
+            </div>
+            {isPro && (
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-success">
+                <Check className="h-3.5 w-3.5" /> Active
+              </span>
             )}
           </div>
-          <p className="text-xs text-muted">
-            Your key stays on this device and is sent only to Anthropic to make
-            your content. Get one from{" "}
-            <a
-              href="https://console.anthropic.com/settings/keys"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="inline-flex items-center gap-0.5 font-semibold text-brand-700 hover:underline"
-            >
-              the Anthropic console <ExternalLink className="h-3 w-3" />
-            </a>
-            . Usage may cost a small amount on your account.
+
+          {!isPro ? (
+            <>
+              <Button onClick={startTrial}>
+                Start {TRIAL_DAYS}-day free trial <Sparkles className="h-4 w-4" />
+              </Button>
+              <p className="text-xs text-muted">
+                Unlocks unlimited videos, every Path season, and live AI coaching.
+                After the trial it&apos;s {PRO_PRICE}/month. Cancel anytime.
+              </p>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={cancel}>
+                Cancel subscription
+              </Button>
+              <p className="text-xs text-muted">
+                Manage or cancel anytime — you&apos;ll keep Pro until the end of
+                your billing period.
+              </p>
+            </>
+          )}
+          <p className="text-[11px] text-muted">
+            Billing is a preview for now — real checkout is coming soon.
           </p>
         </div>
       )}
-
-      {!loaded && <div className="h-10 animate-pulse rounded-2xl bg-paper" />}
     </SettingCard>
   );
 }
@@ -566,21 +490,5 @@ function SaveButton({
         "Save changes"
       )}
     </Button>
-  );
-}
-
-function AiBadge({ live }: { live: boolean }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold",
-        live ? "bg-success/10 text-success" : "bg-amber/10 text-amber",
-      )}
-    >
-      <span
-        className={cn("h-1.5 w-1.5 rounded-full", live ? "bg-success" : "bg-amber")}
-      />
-      {live ? "Live AI" : "Sample AI"}
-    </span>
   );
 }

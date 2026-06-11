@@ -103,20 +103,29 @@ study · The Path (Season 1) + streak · Calendar (scheduling, cadence, upcoming
 time-of-day) · Progress (manual stats, views-over-time line chart, AI coaching,
 milestones) · Video Builder (editing-software & phone/computer aware) · Today
 (live data) · Hook & title tester · Idea vault · Dark mode · Confetti ·
-**Settings** (paste Anthropic key in-app → Live AI, edit brand kit / goal /
-editing setup / theme).
+**Settings** (subscription/billing, edit brand kit / goal / editing setup /
+theme) · **Landing page** (`/welcome`).
 
-**In-app Anthropic key (how it works):** the user pastes a key in Settings; it's
-saved to localStorage (`lib/settings/*`, key `frame:settings`) and POSTed to
-`/api/key`, which stores it in the server's process memory (`lib/runtime-key.ts`,
-never sent back to the browser). `lib/ai.ts` `resolveKey()` prefers the runtime
-key, then `ANTHROPIC_API_KEY`, then falls back to samples — so no AI call site
-changed. `<KeySync/>` (mounted in `AppShell`) re-POSTs the saved key on every
-load so it survives a dev-server restart. `/api/ai-status` now also returns
-`hasEnvKey` / `hasRuntimeKey`. TODO: for a real multi-instance/serverless deploy,
-move the key off a single process variable (per-request or a secured backend).
+**Frame is a paid subscription product (SaaS).** Pricing: a Free plan ("your
+first video, free") + **Frame Pro at $15/mo with a 3-day free trial**. The
+BUSINESS holds the Anthropic key, not the customer — `lib/ai.ts` reads
+`ANTHROPIC_API_KEY` from the server env (your key), so every subscriber gets live
+AI with no key to paste. There is intentionally **no API-key field in Settings**.
+Settings instead has a **Billing section** (`lib/billing/*`, key `frame:billing`)
+— a MOCK plan store (free ↔ pro trial) with start-trial / cancel; swap it for
+Stripe later and the screen stays. `trialDaysLeft`/`inTrial` live in
+`lib/billing/types.ts`.
+
+**Marketing landing page** at `app/welcome/page.tsx` (server component): hero +
+app preview, how-it-works, features, pricing (Free + Pro), FAQ accordion, footer.
+It must render WITHOUT the app chrome, so `components/ShellGate.tsx` (client,
+`usePathname`) wraps everything in `AppShell` EXCEPT routes in `BARE_ROUTES`
+(currently `/welcome`); `app/layout.tsx` uses `<ShellGate>` instead of
+`<AppShell>`. Add any future marketing pages to `BARE_ROUTES`. CTAs point to
+`/onboarding` (real signup/checkout is a later backend step).
 
 Next core screens: **Thumbnail Studio**, **Asset Locker**. Backend-dependent
-(stub now): connect YouTube channel → live analytics, reply to comments (OAuth;
-every reply must require explicit user approval). Later extras: teleprompter,
-niche trend radar, batch planning, accountability nudge.
+(stub now): real auth + Stripe checkout for the subscription; connect YouTube
+channel → live analytics; reply to comments (OAuth; every reply must require
+explicit user approval). Later extras: teleprompter, niche trend radar, batch
+planning, accountability nudge.

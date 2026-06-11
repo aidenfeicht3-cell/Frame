@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
-import { AppShell } from "@/components/AppShell";
+import { ShellGate } from "@/components/ShellGate";
 
 // Body font
 const inter = Inter({
@@ -52,7 +52,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <AppShell>{children}</AppShell>
+        <ShellGate>{children}</ShellGate>
       </body>
     </html>
   );

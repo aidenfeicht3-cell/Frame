@@ -25,10 +25,15 @@
 - **Tools** — Hook & title tester; Idea vault (Plan-this → Builder).
 - **Celebration confetti** on step-complete / season-complete / publish /
   milestone.
-- **Settings** — paste your Anthropic key in-app to flip the whole app from
-  "Sample AI" → "Live AI" (the key is saved on your device and re-synced to the
-  server on every load, so it survives restarts); edit the brand kit
+- **Settings** — manage your subscription/plan, and edit the brand kit
   (name/niche/bio), goal & weekly time, editing software/device, and light/dark.
+- **Landing page** (`/welcome`) — public marketing page: hero + app preview,
+  how-it-works, features, pricing, FAQ, footer. Renders without the app chrome
+  via `ShellGate`.
+- **Monetization** — Frame is a paid product. Free plan ("first video free") +
+  **Frame Pro $15/mo with a 3-day free trial**. The business holds the Anthropic
+  key, so subscribers get live AI with nothing to set up. Billing in Settings is
+  a mock today (`lib/billing/*`) — real checkout (Stripe) comes with the backend.
 
 ## 🔜 Next core screens (buildable now, sample data)
 
@@ -41,6 +46,10 @@
 
 ## 🔒 Needs the backend / accounts (stubbed in `lib/youtube.ts`)
 
+- **Accounts + subscription billing** — real sign-up/login and Stripe checkout
+  for the 3-day trial → Frame Pro. The Billing section in Settings is mock today
+  (`lib/billing/*`); swap the store for Stripe and the screen stays. Gate Pro-only
+  features behind the plan once accounts exist.
 - **Connect your channel → live analytics** — real daily views & subscriber
   growth feeding the Progress line graph (YouTube Data API; public stats need a
   key, retention needs owner OAuth).
