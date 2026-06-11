@@ -3,113 +3,144 @@ import {
   ArrowRight,
   Check,
   Sparkles,
-  Route,
-  Clapperboard,
+  Zap,
+  Lightbulb,
+  Film,
+  Type,
+  Image as ImageIcon,
   CalendarDays,
-  BarChart3,
-  Repeat,
-  Play,
+  Upload,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/marketing/Reveal";
 import { cn } from "@/lib/cn";
 
 export const metadata: Metadata = {
-  title: "Frame — Go from zero subscribers to a real creator",
+  title: "Frame — YouTube automation that grows your channel",
   description:
-    "Frame is Couch-to-5K for YouTube: a calm, step-by-step coach that turns complete beginners into consistent creators. Start your first video free.",
+    "Frame automates the repetitive 80% of YouTube — ideas, scripts, titles, thumbnails, and scheduling — so you post consistently and grow. No bots, no spam. Start free.",
 };
 
 /* --------------------------------- data -------------------------------- */
 
-const FEATURES: { icon: LucideIcon; title: string; body: string }[] = [
+const PIPELINE: { icon: LucideIcon; label: string }[] = [
+  { icon: Lightbulb, label: "Idea" },
+  { icon: Film, label: "Script" },
+  { icon: Type, label: "Title" },
+  { icon: ImageIcon, label: "Thumbnail" },
+  { icon: CalendarDays, label: "Schedule" },
+  { icon: Upload, label: "Publish" },
+];
+
+const MARQUEE = [
+  "Idea research",
+  "Scripts",
+  "Hooks",
+  "Titles",
+  "Thumbnails",
+  "Scheduling",
+  "SEO metadata",
+  "Growth insights",
+  "Brand kit",
+  "Streaks",
+];
+
+const FEATURES: {
+  icon: LucideIcon;
+  title: string;
+  body: string;
+  soon?: boolean;
+}[] = [
   {
-    icon: Route,
-    title: "The Path",
-    body: "A guided route from your very first video to a steady habit — one small, doable step at a time. Never wonder what to do next.",
+    icon: Lightbulb,
+    title: "Endless ideas",
+    body: "Trending-style ideas for your niche, on tap. Bank them so you never face a blank page again.",
   },
   {
-    icon: Clapperboard,
-    title: "Video Builder",
-    body: "Turn an idea into a full plan — hook, title, script, shots, and an edit checklist tailored to your editing app and your phone or computer.",
+    icon: Film,
+    title: "Scripts in seconds",
+    body: "One idea in → a full script out: hook, talking points, and a shot list, ready to film.",
   },
   {
-    icon: Sparkles,
-    title: "AI brand kit",
-    body: "Tell us your niche and get channel-name ideas, a bio, banner and profile concepts, plus real creators worth studying.",
+    icon: Type,
+    title: "Titles that get the click",
+    body: "Every title and hook scored 1–10 and rewritten stronger — automatically.",
+  },
+  {
+    icon: ImageIcon,
+    title: "Thumbnails that pop",
+    body: "Concepts and punchy text engineered to win the click and lift your views.",
+    soon: true,
   },
   {
     icon: CalendarDays,
-    title: "Smart calendar",
-    body: "Plan uploads, set a posting rhythm you can actually keep, and get gentle reminders for what's coming up next.",
+    title: "Hands-off scheduling",
+    body: "Plan a month of uploads, set a cadence you can keep, and never miss a post.",
   },
   {
-    icon: BarChart3,
-    title: "Progress & coaching",
-    body: "Log a video's numbers and get specific, encouraging tips for the next one — with a views-over-time graph and milestones.",
-  },
-  {
-    icon: Repeat,
-    title: "Streaks & momentum",
-    body: "Show up a little each day and watch your streak grow. Small wins, celebrated — because consistency is the whole game.",
+    icon: TrendingUp,
+    title: "Growth on autopilot",
+    body: "See what's working and get told exactly what to make next, every single week.",
   },
 ];
 
 const STEPS: { n: string; title: string; body: string }[] = [
   {
     n: "1",
-    title: "Tell us your niche",
-    body: "Answer a few friendly questions. Frame builds your brand kit and a Path made for where you're starting from.",
+    title: "Tell Frame your niche",
+    body: "Answer a few quick questions. Frame builds your brand kit and a system tailored to your channel.",
   },
   {
     n: "2",
-    title: "Follow your Path",
-    body: "Each day, one clear step. Learn the craft and make real progress without the overwhelm or the guesswork.",
+    title: "Let Frame do the busywork",
+    body: "Ideas, scripts, titles, thumbnails, and your whole schedule — generated for you, ready to go.",
   },
   {
     n: "3",
-    title: "Publish & build the habit",
-    body: "Plan, film, and ship videos with help at every stage — then keep your streak alive and grow week over week.",
+    title: "Record, upload, repeat",
+    body: "You handle the one part only you can. Frame keeps the pipeline full so you stay consistent and grow.",
   },
 ];
 
 const FREE_BULLETS = [
-  "Your AI brand kit & channel name",
+  "AI brand kit + niche ideas",
+  "A full script & title for your first video",
+  "Scheduling calendar",
   "The first steps of your Path",
-  "Plan & publish your first video",
-  "Calendar to schedule your upload",
 ];
 
 const PRO_BULLETS = [
   "Everything in Free",
-  "Unlimited videos & full Video Builder",
+  "Unlimited scripts & videos",
+  "Title & hook optimizer",
+  "Growth analytics & AI coaching",
   "Every Path season, start to finish",
-  "Live AI coaching on every video",
-  "Progress analytics & milestones",
   "Thumbnail Studio (coming soon)",
 ];
 
 const FAQS: { q: string; a: string }[] = [
   {
+    q: "Isn't “automation” against YouTube's rules?",
+    a: "Not the way Frame does it. We automate your own workflow — ideas, scripts, titles, scheduling — never bots, fake views, or spam. Everything you publish is genuinely yours and fully policy-safe.",
+  },
+  {
+    q: "Do I have to show my face?",
+    a: "No. Frame works for faceless and on-camera channels alike — it plans and packages the content either way.",
+  },
+  {
+    q: "What exactly gets automated?",
+    a: "The repetitive 80%: idea research, scripts & hooks, titles, thumbnails (coming soon), scheduling, and growth insights. You bring the recording and hit upload.",
+  },
+  {
     q: "Do I need any experience?",
-    a: "None at all. Frame is built for complete beginners with zero subscribers. It explains everything in plain language and only ever asks for one small step at a time.",
-  },
-  {
-    q: "Do I have to pay for AI separately?",
-    a: "No. Your subscription includes all the AI — brand kits, video plans, title ratings, and coaching. There are no API keys to set up and nothing extra to buy.",
-  },
-  {
-    q: "What's included in the free plan?",
-    a: "Enough to get your very first video out the door: your AI brand kit, the opening steps of your Path, and the tools to plan, build, and schedule one video.",
-  },
-  {
-    q: "What do I need to get started?",
-    a: "Just your phone. Frame works on mobile and desktop, and the Video Builder tailors its edit steps to whatever editing app you already use.",
+    a: "None at all. Frame is built for complete beginners and walks you through every step in plain language.",
   },
   {
     q: "Can I cancel anytime?",
-    a: "Yes. Start with a 3-day free trial of Pro, and cancel whenever you like — no hassle, no hard feelings.",
+    a: "Yes. Start with a 3-day free trial of Pro and cancel whenever you like — no hassle, no hard feelings.",
   },
 ];
 
@@ -121,8 +152,10 @@ export default function WelcomePage() {
       <SiteHeader />
       <main>
         <Hero />
-        <HowItWorks />
+        <Marquee />
+        <Problem />
         <Features />
+        <HowItWorks />
         <Pricing />
         <Faq />
         <FinalCta />
@@ -142,8 +175,8 @@ function SiteHeader() {
           <Logo />
         </a>
         <nav className="hidden items-center gap-8 text-sm font-semibold text-muted md:flex">
+          <a href="#features" className="transition-colors hover:text-ink">What it automates</a>
           <a href="#how" className="transition-colors hover:text-ink">How it works</a>
-          <a href="#features" className="transition-colors hover:text-ink">Features</a>
           <a href="#pricing" className="transition-colors hover:text-ink">Pricing</a>
           <a href="#faq" className="transition-colors hover:text-ink">FAQ</a>
         </nav>
@@ -165,126 +198,137 @@ function SiteHeader() {
 function Hero() {
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* soft blue glows */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 right-[-10%] h-96 w-96 rounded-full bg-brand-400/20 blur-3xl"
+        className="pointer-events-none absolute -top-32 right-[-10%] h-96 w-96 animate-float rounded-full bg-brand-400/20 blur-3xl"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-40 left-[-10%] h-96 w-96 rounded-full bg-brand-300/20 blur-3xl"
+        className="pointer-events-none absolute -bottom-40 left-[-10%] h-96 w-96 animate-float rounded-full bg-brand-300/20 blur-3xl"
+        style={{ animationDelay: "1.5s" }}
       />
 
       <div className="mx-auto grid w-full max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24">
         <div className="animate-fade-up">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-surface px-3 py-1.5 text-xs font-semibold text-brand-700 shadow-soft">
-            <Sparkles className="h-3.5 w-3.5" /> Couch-to-5K, but for YouTube
+            <Zap className="h-3.5 w-3.5" /> YouTube automation — without the bots
           </span>
           <h1 className="mt-5 text-balance font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-            Become a YouTuber,{" "}
-            <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
-              one step at a time
+            Put the boring 80% of YouTube on{" "}
+            <span className="bg-gradient-to-r from-brand-400 via-brand-600 to-brand-400 bg-[length:200%_auto] bg-clip-text text-transparent animate-shimmer">
+              autopilot
             </span>
             .
           </h1>
           <p className="mt-5 max-w-md text-lg text-muted">
-            Frame turns &ldquo;I don&apos;t know where to start&rdquo; into a clear
-            daily path — from your first video to a real posting habit. No
-            experience needed.
+            Frame automates the repetitive work behind every video — ideas,
+            scripts, titles, thumbnails, and scheduling — so you post
+            consistently and grow. No bots, no spam. Just your channel, running
+            like a system.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/onboarding" className="px-6 py-3.5 text-base">
-              Start your first video — free <ArrowRight className="h-4 w-4" />
+              Start automating — free <ArrowRight className="h-4 w-4" />
             </Button>
             <Button href="#how" variant="ghost" className="px-6 py-3.5 text-base">
               See how it works
             </Button>
           </div>
           <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
-            {["Free to start", "No credit card", "Cancel anytime"].map((t) => (
-              <li key={t} className="inline-flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-success" /> {t}
-              </li>
-            ))}
+            {["Policy-safe", "Faceless or on-camera", "No experience needed"].map(
+              (t) => (
+                <li key={t} className="inline-flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-success" /> {t}
+                </li>
+              ),
+            )}
           </ul>
         </div>
 
         <div className="animate-fade-up [animation-delay:120ms]">
-          <AppPreview />
+          <Pipeline />
         </div>
       </div>
     </section>
   );
 }
 
-/** A stylised peek at the app — purely decorative, built from the design tokens. */
-function AppPreview() {
+/** The hero's animated "automation pipeline" — a beam sweeps the assembly line. */
+function Pipeline() {
   return (
     <div className="relative mx-auto max-w-sm">
       <div className="rounded-3xl border border-hairline bg-surface p-5 shadow-lift">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <LogoMark className="h-7 w-7" />
-            <span className="font-display text-sm font-bold">Today</span>
+            <span className="font-display text-sm font-bold">Your channel</span>
           </div>
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber/10 px-2.5 py-1 text-xs font-bold text-amber">
-            🔥 5 day streak
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
+            <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-success" />
+            Automating
           </span>
         </div>
 
-        {/* next step highlight */}
-        <div className="mt-4 rounded-2xl bg-brand-600 p-4 text-white shadow-glow">
-          <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-            Your next step
-          </p>
-          <p className="mt-1 font-display text-lg font-bold">Film your hook</p>
-          <div className="mt-3 flex items-center justify-between">
-            <div className="h-1.5 w-32 overflow-hidden rounded-full bg-white/25">
-              <div className="h-full w-2/3 rounded-full bg-white" />
-            </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-xs font-bold">
-              <Play className="h-3 w-3" /> Step 3 of 8
-            </span>
-          </div>
-        </div>
+        <div
+          className="relative mt-4 space-y-2 overflow-hidden rounded-2xl"
+          style={{ ["--flow" as string]: "300px" } as React.CSSProperties}
+        >
+          {PIPELINE.map((step, i) => {
+            const Icon = step.icon;
+            const last = i === PIPELINE.length - 1;
+            return (
+              <div
+                key={step.label}
+                className={cn(
+                  "flex items-center gap-3 rounded-2xl border px-3 py-2.5",
+                  last
+                    ? "border-brand-300 bg-brand-50"
+                    : "border-hairline bg-paper",
+                )}
+              >
+                <span
+                  className={cn(
+                    "grid h-8 w-8 shrink-0 place-items-center rounded-xl",
+                    last ? "bg-brand-600 text-white" : "bg-brand-50 text-brand-600",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="text-sm font-semibold">{step.label}</span>
+                <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-muted">
+                  {last ? "you" : "auto"}
+                </span>
+              </div>
+            );
+          })}
 
-        {/* path rows */}
-        <div className="mt-4 space-y-2">
-          {[
-            { label: "Find your first idea", done: true },
-            { label: "Write a scroll-stopping title", done: true },
-            { label: "Film your hook", done: false, current: true },
-          ].map((row) => (
-            <div
-              key={row.label}
-              className={cn(
-                "flex items-center gap-3 rounded-2xl border px-3 py-2.5",
-                row.current
-                  ? "border-brand-300 bg-brand-50"
-                  : "border-hairline bg-paper",
-              )}
+          {/* sweeping automation beam */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-16 animate-flow-down bg-gradient-to-b from-transparent via-brand-400/25 to-transparent"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------- marquee ------------------------------ */
+
+function Marquee() {
+  const items = [...MARQUEE, ...MARQUEE];
+  return (
+    <div className="border-y border-hairline bg-surface/40 py-4">
+      <div className="relative flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+        <div className="flex w-max shrink-0 animate-marquee items-center gap-3 pr-3">
+          {items.map((item, i) => (
+            <span
+              key={`${item}-${i}`}
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-hairline bg-surface px-4 py-1.5 text-sm font-semibold text-muted"
             >
-              <span
-                className={cn(
-                  "grid h-6 w-6 shrink-0 place-items-center rounded-full text-white",
-                  row.done ? "bg-success" : row.current ? "bg-brand-600" : "bg-muted",
-                )}
-              >
-                {row.done ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  <span className="text-[11px] font-bold">3</span>
-                )}
-              </span>
-              <span
-                className={cn(
-                  "text-sm font-semibold",
-                  row.done && "text-muted line-through",
-                )}
-              >
-                {row.label}
-              </span>
-            </div>
+              <Sparkles className="h-3.5 w-3.5 text-brand-500" />
+              {item}
+            </span>
           ))}
         </div>
       </div>
@@ -292,31 +336,26 @@ function AppPreview() {
   );
 }
 
-/* ------------------------------ how it works --------------------------- */
+/* -------------------------------- problem ------------------------------ */
 
-function HowItWorks() {
+function Problem() {
   return (
-    <section id="how" className="scroll-mt-20 border-t border-hairline">
-      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 md:py-20">
-        <SectionHeading
-          eyebrow="How it works"
-          title="From overwhelmed to on your way in three steps"
-          subtitle="No fluff, no 47-tab rabbit holes. Just the next right thing to do."
-        />
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {STEPS.map((s) => (
-            <div
-              key={s.n}
-              className="rounded-3xl border border-hairline bg-surface p-6 shadow-card"
-            >
-              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 font-display text-lg font-bold text-white shadow-glow">
-                {s.n}
-              </span>
-              <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
-              <p className="mt-1.5 text-sm text-muted">{s.body}</p>
-            </div>
-          ))}
-        </div>
+    <section className="border-b border-hairline">
+      <div className="mx-auto w-full max-w-4xl px-4 py-16 text-center sm:px-6 md:py-20">
+        <Reveal>
+          <p className="text-xs font-bold uppercase tracking-widest text-brand-600">
+            The real problem
+          </p>
+          <h2 className="mt-3 text-balance font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Making a video is 20% filming and{" "}
+            <span className="text-brand-600">80% busywork.</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-muted">
+            Scripting, titles, thumbnails, scheduling, optimizing — it's the
+            grind that burns creators out and kills consistency. Frame automates
+            that 80%, so the part only you can do is all that's left.
+          </p>
+        </Reveal>
       </div>
     </section>
   );
@@ -326,29 +365,68 @@ function HowItWorks() {
 
 function Features() {
   return (
-    <section id="features" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+    <section id="features" className="scroll-mt-20 border-b border-hairline bg-surface/40">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 md:py-20">
-        <SectionHeading
-          eyebrow="Everything you need"
-          title="Your whole creator toolkit, in one calm place"
-          subtitle="Frame does the boring parts and teaches the craft — so you can actually hit publish."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="What it automates"
+            title="Your whole content pipeline, on autopilot"
+            subtitle="Everything between “I have an idea” and “it's live” — handled for you."
+          />
+        </Reveal>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => {
+          {FEATURES.map((f, i) => {
             const Icon = f.icon;
             return (
-              <div
-                key={f.title}
-                className="group rounded-3xl border border-hairline bg-surface p-6 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift"
-              >
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-600 group-hover:text-white">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-4 font-display text-lg font-bold">{f.title}</h3>
-                <p className="mt-1.5 text-sm text-muted">{f.body}</p>
-              </div>
+              <Reveal key={f.title} delay={(i % 3) * 90}>
+                <div className="group h-full rounded-3xl border border-hairline bg-surface p-6 shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+                  <div className="flex items-center justify-between">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-600 group-hover:text-white">
+                      <Icon className="h-6 w-6" />
+                    </span>
+                    {f.soon && (
+                      <span className="rounded-full bg-amber/10 px-2.5 py-1 text-[11px] font-bold text-amber">
+                        Coming soon
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-4 font-display text-lg font-bold">{f.title}</h3>
+                  <p className="mt-1.5 text-sm text-muted">{f.body}</p>
+                </div>
+              </Reveal>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------ how it works --------------------------- */
+
+function HowItWorks() {
+  return (
+    <section id="how" className="scroll-mt-20 border-b border-hairline">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 md:py-20">
+        <Reveal>
+          <SectionHeading
+            eyebrow="How it works"
+            title="Set it up once. Stay consistent forever."
+            subtitle="Three steps to a channel that practically runs itself."
+          />
+        </Reveal>
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <Reveal key={s.n} delay={i * 110}>
+              <div className="h-full rounded-3xl border border-hairline bg-surface p-6 shadow-card">
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-600 font-display text-lg font-bold text-white shadow-glow">
+                  {s.n}
+                </span>
+                <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
+                <p className="mt-1.5 text-sm text-muted">{s.body}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
@@ -359,48 +437,52 @@ function Features() {
 
 function Pricing() {
   return (
-    <section id="pricing" className="scroll-mt-20 border-t border-hairline">
+    <section id="pricing" className="scroll-mt-20 border-b border-hairline">
       <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6 md:py-20">
-        <SectionHeading
-          eyebrow="Pricing"
-          title="Start free. Go Pro when you're ready."
-          subtitle="Your first video is on us. Upgrade for the full journey — with a 3-day free trial."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="Pricing"
+            title="Start free. Automate everything when you're ready."
+            subtitle="Your first video is on us. Go Pro to put the whole channel on autopilot — with a 3-day free trial."
+          />
+        </Reveal>
 
         <div className="mx-auto mt-10 grid max-w-3xl gap-5 md:grid-cols-2 md:items-start">
-          {/* Free */}
-          <div className="rounded-3xl border border-hairline bg-surface p-7 shadow-card">
-            <h3 className="font-display text-xl font-bold">Free</h3>
-            <p className="mt-1 text-sm text-muted">Your first video, on the house.</p>
-            <p className="mt-5">
-              <span className="font-display text-4xl font-extrabold">$0</span>
-              <span className="text-sm text-muted"> / forever</span>
-            </p>
-            <Button href="/onboarding" variant="secondary" className="mt-5 w-full">
-              Start free
-            </Button>
-            <BulletList items={FREE_BULLETS} />
-          </div>
+          <Reveal>
+            <div className="h-full rounded-3xl border border-hairline bg-surface p-7 shadow-card">
+              <h3 className="font-display text-xl font-bold">Free</h3>
+              <p className="mt-1 text-sm text-muted">Automate your first video.</p>
+              <p className="mt-5">
+                <span className="font-display text-4xl font-extrabold">$0</span>
+                <span className="text-sm text-muted"> / forever</span>
+              </p>
+              <Button href="/onboarding" variant="secondary" className="mt-5 w-full">
+                Start free
+              </Button>
+              <BulletList items={FREE_BULLETS} />
+            </div>
+          </Reveal>
 
-          {/* Pro */}
-          <div className="relative rounded-3xl border-2 border-brand-500 bg-surface p-7 shadow-lift">
-            <span className="absolute -top-3 right-6 inline-flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1 text-xs font-bold text-white shadow-glow">
-              <Sparkles className="h-3 w-3" /> Most popular
-            </span>
-            <h3 className="font-display text-xl font-bold">Frame Pro</h3>
-            <p className="mt-1 text-sm text-muted">Everything, for the long haul.</p>
-            <p className="mt-5">
-              <span className="font-display text-4xl font-extrabold">$15</span>
-              <span className="text-sm text-muted"> / month</span>
-            </p>
-            <Button href="/onboarding" className="mt-5 w-full">
-              Start 3-day free trial <ArrowRight className="h-4 w-4" />
-            </Button>
-            <p className="mt-2 text-center text-xs text-muted">
-              Then $15/month. Cancel anytime.
-            </p>
-            <BulletList items={PRO_BULLETS} highlight />
-          </div>
+          <Reveal delay={90}>
+            <div className="relative h-full rounded-3xl border-2 border-brand-500 bg-surface p-7 shadow-lift">
+              <span className="absolute -top-3 right-6 inline-flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1 text-xs font-bold text-white shadow-glow">
+                <Sparkles className="h-3 w-3" /> Most popular
+              </span>
+              <h3 className="font-display text-xl font-bold">Frame Pro</h3>
+              <p className="mt-1 text-sm text-muted">Automate your whole channel.</p>
+              <p className="mt-5">
+                <span className="font-display text-4xl font-extrabold">$15</span>
+                <span className="text-sm text-muted"> / month</span>
+              </p>
+              <Button href="/onboarding" className="mt-5 w-full">
+                Start 3-day free trial <ArrowRight className="h-4 w-4" />
+              </Button>
+              <p className="mt-2 text-center text-xs text-muted">
+                Then $15/month. Cancel anytime.
+              </p>
+              <BulletList items={PRO_BULLETS} highlight />
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -437,27 +519,28 @@ function BulletList({
 
 function Faq() {
   return (
-    <section id="faq" className="scroll-mt-20 border-t border-hairline bg-surface/40">
+    <section id="faq" className="scroll-mt-20 border-b border-hairline bg-surface/40">
       <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 md:py-20">
-        <SectionHeading
-          eyebrow="FAQ"
-          title="Questions, answered"
-          subtitle="Still curious? You'll find the rest inside."
-        />
+        <Reveal>
+          <SectionHeading
+            eyebrow="FAQ"
+            title="Questions, answered"
+            subtitle="Honest about what Frame does — and doesn't — do."
+          />
+        </Reveal>
         <div className="mt-8 space-y-3">
-          {FAQS.map((f) => (
-            <details
-              key={f.q}
-              className="group rounded-2xl border border-hairline bg-surface px-5 py-4 shadow-card [&_summary::-webkit-details-marker]:hidden"
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base font-bold">
-                {f.q}
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-600 transition-transform duration-200 group-open:rotate-45">
-                  <span className="text-lg leading-none">+</span>
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-muted">{f.a}</p>
-            </details>
+          {FAQS.map((f, i) => (
+            <Reveal key={f.q} delay={i * 60}>
+              <details className="group rounded-2xl border border-hairline bg-surface px-5 py-4 shadow-card [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base font-bold">
+                  {f.q}
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-brand-600 transition-transform duration-200 group-open:rotate-45">
+                    <span className="text-lg leading-none">+</span>
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm text-muted">{f.a}</p>
+              </details>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -469,26 +552,27 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section className="border-t border-hairline">
+    <section className="border-b border-hairline">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 md:py-20">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-14 text-center shadow-lift sm:px-12">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl"
-          />
-          <h2 className="relative font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Your first video is closer than you think.
-          </h2>
-          <p className="relative mx-auto mt-3 max-w-md text-white/80">
-            Join Frame and take the first small step today. We&apos;ll guide the
-            rest.
-          </p>
-          <div className="relative mt-7 flex justify-center">
-            <Button href="/onboarding" variant="light" className="px-7 py-3.5 text-base">
-              Get started free <ArrowRight className="h-4 w-4" />
-            </Button>
+        <Reveal>
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-14 text-center shadow-lift sm:px-12">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 animate-float rounded-full bg-white/10 blur-2xl"
+            />
+            <h2 className="relative font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              Your channel could be running itself by tonight.
+            </h2>
+            <p className="relative mx-auto mt-3 max-w-md text-white/80">
+              Take the first step now — Frame automates the rest.
+            </p>
+            <div className="relative mt-7 flex justify-center">
+              <Button href="/onboarding" variant="light" className="px-7 py-3.5 text-base">
+                Start automating — free <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -498,12 +582,12 @@ function FinalCta() {
 
 function SiteFooter() {
   return (
-    <footer className="border-t border-hairline">
+    <footer>
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-4 py-10 sm:flex-row sm:px-6">
         <Logo />
         <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-semibold text-muted">
+          <a href="#features" className="hover:text-ink">What it automates</a>
           <a href="#how" className="hover:text-ink">How it works</a>
-          <a href="#features" className="hover:text-ink">Features</a>
           <a href="#pricing" className="hover:text-ink">Pricing</a>
           <a href="#faq" className="hover:text-ink">FAQ</a>
           <a href="/" className="hover:text-ink">Open app</a>

@@ -68,11 +68,39 @@ const config: Config = {
           "0%": { transform: "translateY(-12vh) rotate(0deg)", opacity: "1" },
           "100%": { transform: "translateY(110vh) rotate(720deg)", opacity: "0" },
         },
+        // Marketing/landing motion
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-12px)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "200% center" },
+          "100%": { backgroundPosition: "-200% center" },
+        },
+        "flow-down": {
+          "0%": { transform: "translateY(0)", opacity: "0" },
+          "12%": { opacity: "1" },
+          "88%": { opacity: "1" },
+          "100%": { transform: "translateY(var(--flow, 240px))", opacity: "0" },
+        },
+        "pulse-soft": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s cubic-bezier(0.22,1,0.36,1) both",
         "fade-in": "fade-in 0.4s ease both",
         "confetti-fall": "confetti-fall 1.8s linear forwards",
+        float: "float 6s ease-in-out infinite",
+        marquee: "marquee 30s linear infinite",
+        shimmer: "shimmer 6s linear infinite",
+        "flow-down": "flow-down 2.8s ease-in-out infinite",
+        "pulse-soft": "pulse-soft 2.6s ease-in-out infinite",
       },
     },
   },
