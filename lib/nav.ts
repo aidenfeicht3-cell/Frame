@@ -2,6 +2,7 @@ import {
   Home,
   Route,
   Clapperboard,
+  Layers,
   CalendarDays,
   BarChart3,
 } from "lucide-react";
@@ -23,6 +24,7 @@ export const navItems: NavItem[] = [
   { href: "/today", label: "Today", icon: Home },
   { href: "/path", label: "Path", icon: Route },
   { href: "/builder", label: "Build", icon: Clapperboard },
+  { href: "/projects", label: "Projects", icon: Layers },
   { href: "/calendar", label: "Calendar", icon: CalendarDays },
   { href: "/progress", label: "Progress", icon: BarChart3 },
 ];
