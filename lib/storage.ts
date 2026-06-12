@@ -41,5 +41,6 @@ export const STORAGE_KEYS = {
   milestones: "frame:milestones",
   billing: "frame:billing",
   projectStages: "frame:projectStages",
+  vaultFavorites: "frame:vaultFavorites",
   // future: goals, ...
 } as const;

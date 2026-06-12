@@ -207,6 +207,24 @@ export default function TodayPage() {
         />
       </section>
 
+      {/* Vault quick link */}
+      {onboarded && (
+        <Link href="/vault" className="block">
+          <Card interactive className="flex items-center gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-lg">
+              🧠
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-ink">Your vault</p>
+              <p className="text-xs text-muted">
+                Search every idea &amp; project
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted" />
+          </Card>
+        </Link>
+      )}
+
       {/* Your Path preview (real) */}
       <section className="animate-fade-up" style={{ animationDelay: "180ms" }}>
         <Card className="space-y-4">
