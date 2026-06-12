@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Loader2, Sparkles } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const PANEL_POINTS = [
   "AI writes your scripts, titles & hooks",
@@ -20,26 +22,79 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   // Read ?plan=pro without pulling in useSearchParams (keeps the page static).
   useEffect(() => {
     setPro(new URLSearchParams(window.location.search).get("plan") === "pro");
   }, []);
 
-  // NOTE: front-end only for now — real accounts arrive once Supabase is wired.
-  // For the moment, "signing up" drops you into onboarding (the local app).
-  const proceed = () => {
-    if (loading) return;
-    setLoading(true);
-    setTimeout(() => router.push("/onboarding"), 750);
-  };
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    proceed();
-  };
-
   const isSignup = mode === "signup";
+
+  // No Supabase configured yet → keep the old behaviour (straight to onboarding).
+  const finishMock = () => {
+    setLoading(true);
+    setTimeout(() => router.push("/onboarding"), 600);
+  };
+
+  const handleGoogle = async () => {
+    if (loading) return;
+    setError(null);
+    setNotice(null);
+    if (!isSupabaseConfigured()) return finishMock();
+    setLoading(true);
+    const { error } = await createClient().auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+    if (error) {
+      setError("Google sign-in isn't enabled yet — use email for now.");
+      setLoading(false);
+    }
+    // On success the browser is redirected to Google.
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    setError(null);
+    setNotice(null);
+    if (!isSupabaseConfigured()) return finishMock();
+
+    setLoading(true);
+    const supabase = createClient();
+
+    if (isSignup) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      if (data.session) {
+        router.push("/onboarding");
+      } else {
+        setNotice("Check your email to confirm your account, then log in.");
+        setLoading(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      router.push("/today");
+    }
+  };
 
   return (
     <div className="grid min-h-dvh bg-paper md:grid-cols-2">
@@ -113,10 +168,21 @@ export default function SignupPage() {
               : "Log in to pick up where you left off."}
           </p>
 
-          {/* Google (mock) */}
+          {error && (
+            <p className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+              {error}
+            </p>
+          )}
+          {notice && (
+            <p className="mt-4 rounded-xl bg-success/10 px-3 py-2 text-xs font-medium text-success">
+              {notice}
+            </p>
+          )}
+
+          {/* Continue with Google */}
           <button
             type="button"
-            onClick={proceed}
+            onClick={handleGoogle}
             disabled={loading}
             className="mt-7 flex w-full animate-fade-up items-center justify-center gap-2.5 rounded-2xl border border-hairline bg-surface px-5 py-3 text-sm font-semibold text-ink shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift disabled:pointer-events-none disabled:opacity-60"
             style={{ animationDelay: "120ms" }}

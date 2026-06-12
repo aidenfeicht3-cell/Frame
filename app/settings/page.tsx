@@ -21,6 +21,7 @@ import {
   saveEditingSetup,
 } from "@/lib/builder/store";
 import { EDITING_SOFTWARE, type Device } from "@/lib/builder/types";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const HOURS = [
   { label: "1–2 hrs", value: 2 },
@@ -47,6 +48,7 @@ export default function SettingsPage() {
       <EditingCard />
       <AppearanceCard />
       <CadenceCard />
+      <AccountCard />
     </div>
   );
 }
@@ -381,6 +383,24 @@ function CadenceCard() {
       <Button href="/calendar" variant="secondary">
         Manage cadence in Calendar
       </Button>
+    </SettingCard>
+  );
+}
+
+/** Sign out — only relevant once real accounts (Supabase) are connected. */
+function AccountCard() {
+  if (!isSupabaseConfigured()) return null;
+  return (
+    <SettingCard
+      emoji="🔐"
+      title="Account"
+      desc="You're signed in to Frame."
+    >
+      <form action="/auth/signout" method="post">
+        <Button type="submit" variant="ghost">
+          Sign out
+        </Button>
+      </form>
     </SettingCard>
   );
 }
