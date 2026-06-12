@@ -20,7 +20,7 @@ export type NavItem = {
  * these, and Settings lives in the top bar / sidebar footer.
  */
 export const navItems: NavItem[] = [
-  { href: "/", label: "Today", icon: Home },
+  { href: "/today", label: "Today", icon: Home },
   { href: "/path", label: "Path", icon: Route },
   { href: "/builder", label: "Build", icon: Clapperboard },
   { href: "/calendar", label: "Calendar", icon: CalendarDays },

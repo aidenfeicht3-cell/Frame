@@ -85,7 +85,7 @@ export default function SignupPage() {
       <main className="flex items-center justify-center px-5 py-10">
         <div className="w-full max-w-sm animate-scale-in">
           <a
-            href="/"
+            href="/welcome"
             className="mb-8 inline-flex items-center gap-1.5 text-sm font-semibold text-muted transition-colors hover:text-ink"
           >
             <ArrowLeft className="h-4 w-4" /> Back to home
@@ -121,8 +121,15 @@ export default function SignupPage() {
             className="mt-7 flex w-full animate-fade-up items-center justify-center gap-2.5 rounded-2xl border border-hairline bg-surface px-5 py-3 text-sm font-semibold text-ink shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift disabled:pointer-events-none disabled:opacity-60"
             style={{ animationDelay: "120ms" }}
           >
-            <GoogleMark />
-            Continue with Google
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Connecting…
+              </>
+            ) : (
+              <>
+                <GoogleMark /> Continue with Google
+              </>
+            )}
           </button>
 
           <div

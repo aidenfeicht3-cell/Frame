@@ -181,7 +181,7 @@ function SiteHeader() {
           <a href="#faq" className="transition-colors hover:text-ink">FAQ</a>
         </nav>
         <div className="flex items-center gap-2">
-          <Button href="/" variant="ghost" className="hidden sm:inline-flex">
+          <Button href="/today" variant="ghost" className="hidden sm:inline-flex">
             Open app
           </Button>
           <Button href="/signup">
@@ -590,7 +590,7 @@ function SiteFooter() {
           <a href="#how" className="hover:text-ink">How it works</a>
           <a href="#pricing" className="hover:text-ink">Pricing</a>
           <a href="#faq" className="hover:text-ink">FAQ</a>
-          <a href="/" className="hover:text-ink">Open app</a>
+          <a href="/today" className="hover:text-ink">Open app</a>
         </nav>
         <p className="text-xs text-muted">© 2026 Frame</p>
       </div>

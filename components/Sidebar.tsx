@@ -18,7 +18,7 @@ export function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-hairline bg-surface/70 px-4 py-6 backdrop-blur-xl md:flex">
-      <Link href="/" className="mb-8 px-2">
+      <Link href="/today" className="mb-8 px-2">
         <Logo />
       </Link>
 

@@ -129,7 +129,7 @@ export default function OnboardingPage() {
         goalLabel={profile.goal ? GOAL_LABELS[profile.goal] : "—"}
         weeklyHours={profile.weeklyHours}
         bio={profile.bio}
-        onGo={() => router.push("/")}
+        onGo={() => router.push("/today")}
         onStartOver={startOver}
       />
     );

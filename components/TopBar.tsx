@@ -15,7 +15,7 @@ export function TopBar() {
   const { streak } = useStreak();
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-hairline bg-paper/70 px-4 py-3 backdrop-blur-xl md:justify-end">
-      <Link href="/" className="md:hidden">
+      <Link href="/today" className="md:hidden">
         <Logo markClassName="h-7 w-7" />
       </Link>
 
