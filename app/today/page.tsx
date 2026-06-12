@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   MessageCircle,
   PartyPopper,
+  Clapperboard,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -23,12 +24,14 @@ import { useStreak } from "@/lib/useStreak";
 import { usePath } from "@/lib/path/usePath";
 import { useCalendar } from "@/lib/calendar/useCalendar";
 import { toISODate, formatShort } from "@/lib/calendar/dates";
+import { useProjects } from "@/lib/projects/useProjects";
 
 export default function TodayPage() {
   const { loaded: profileLoaded, profile } = useProfile();
   const { streak, weekCount } = useStreak();
   const path = usePath();
   const cal = useCalendar();
+  const projects = useProjects();
 
   const ready = profileLoaded && path.loaded && cal.loaded;
   const onboarded = Boolean(profile);
@@ -40,6 +43,11 @@ export default function TodayPage() {
 
   const currentLevel =
     path.currentIndex >= 0 ? path.levels[path.currentIndex] : null;
+
+  // The in-progress video closest to done — nudge the user to finish it.
+  const closestVideo = projects.loaded
+    ? ([...projects.inProgress].sort((a, b) => b.pct - a.pct)[0] ?? null)
+    : null;
 
   if (!ready) {
     return (
@@ -153,6 +161,32 @@ export default function TodayPage() {
             </div>
             <span className="shrink-0 text-xs font-semibold text-brand-700">
               {formatShort(nextUp.date)}
+            </span>
+          </Card>
+        </Link>
+      )}
+
+      {/* Finish your video — nudge toward the closest-to-done project */}
+      {onboarded && closestVideo && (
+        <Link href="/projects" className="block">
+          <Card
+            interactive
+            className="animate-fade-up flex items-center gap-3 border-brand-200 bg-brand-50/60"
+            style={{ animationDelay: "90ms" }}
+          >
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-600 text-white">
+              <Clapperboard className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-600">
+                Finish your video
+              </p>
+              <p className="truncate text-sm font-semibold text-ink">
+                {closestVideo.project.idea}
+              </p>
+            </div>
+            <span className="shrink-0 text-sm font-bold text-brand-700">
+              {closestVideo.pct}%
             </span>
           </Card>
         </Link>

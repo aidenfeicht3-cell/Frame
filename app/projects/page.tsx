@@ -16,13 +16,18 @@ export default function ProjectsPage() {
 
   return (
     <div className="space-y-5 py-2">
-      <header className="space-y-1">
-        <h1 className="font-display text-2xl font-bold tracking-tight">
-          Projects
-        </h1>
-        <p className="text-sm text-muted">
-          Every video from idea to published — finish what you start.
-        </p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="font-display text-2xl font-bold tracking-tight">
+            Projects
+          </h1>
+          <p className="text-sm text-muted">
+            Every video from idea to published — finish what you start.
+          </p>
+        </div>
+        <Button href="/builder" variant="secondary" className="shrink-0">
+          <Sparkles className="h-4 w-4" /> New video
+        </Button>
       </header>
 
       {!loaded ? (

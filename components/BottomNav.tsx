@@ -26,7 +26,7 @@ export function BottomNav() {
               >
                 <span
                   className={cn(
-                    "grid place-items-center rounded-2xl px-5 py-1 transition-colors",
+                    "grid place-items-center rounded-2xl px-3.5 py-1 transition-colors",
                     active ? "bg-indigo/10 text-indigo" : "text-muted",
                   )}
                 >
