@@ -107,7 +107,7 @@ function BillingCard() {
                 Start {TRIAL_DAYS}-day free trial <Sparkles className="h-4 w-4" />
               </Button>
               <p className="text-xs text-muted">
-                Unlocks unlimited videos, every Path season, and live AI coaching.
+                Unlocks unlimited videos, every Path phase, and live AI coaching.
                 After the trial it&apos;s {PRO_PRICE}/month. Cancel anytime.
               </p>
             </>

@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 import { usePath } from "@/lib/path/usePath";
-import { SEASON2_PREVIEW } from "@/lib/path/curriculum";
+import { PHASE2_PREVIEW } from "@/lib/path/curriculum";
 
 export default function PathPage() {
   const path = usePath();
@@ -18,7 +18,7 @@ export default function PathPage() {
           <h1 className="font-display text-2xl font-bold tracking-tight">
             The Path
           </h1>
-          <p className="text-sm text-muted">Season 1 · The on-ramp</p>
+          <p className="text-sm text-muted">Phase 1 · The on-ramp</p>
         </div>
         {path.loaded && (
           <div className="space-y-1.5">
@@ -128,7 +128,7 @@ export default function PathPage() {
                 <PartyPopper className="h-6 w-6" />
               </span>
               <h2 className="font-display text-lg font-bold">
-                Season 1 complete! 🎉
+                Phase 1 complete! 🎉
               </h2>
               <p className="text-sm text-muted">
                 You went from zero to published — that&apos;s the hard part, and
@@ -137,14 +137,14 @@ export default function PathPage() {
             </Card>
           )}
 
-          {/* Season 2 — locked preview */}
+          {/* Phase 2 — locked preview */}
           <Card className="flex items-center gap-3 border-dashed">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-paper text-muted">
               <Lock className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold">{SEASON2_PREVIEW.title}</p>
-              <p className="text-xs text-muted">{SEASON2_PREVIEW.blurb}</p>
+              <p className="text-sm font-semibold">{PHASE2_PREVIEW.title}</p>
+              <p className="text-xs text-muted">{PHASE2_PREVIEW.blurb}</p>
             </div>
             <span className="shrink-0 rounded-full bg-paper px-2.5 py-1 text-[11px] font-semibold text-muted">
               Soon

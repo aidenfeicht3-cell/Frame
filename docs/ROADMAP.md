@@ -7,8 +7,8 @@
 - **Onboarding** — starting point → niche → **similar channels to study** → AI
   **brand kit** (name picker, bio, banner/pfp concepts) → goal + weekly time;
   saves a profile.
-- **The Path** — Season 1 (8 levels), lesson + one action each, sequential
-  unlock, progress bar, Season 2 preview.
+- **The Path** — Phase 1 (8 levels), lesson + one action each, sequential
+  unlock, progress bar, Phase 2 preview.
 - **Streak** — completing a Path action (or publishing) marks the day active;
   live flame in the top bar / sidebar / Today; weekly-active count.
 - **Calendar** — month grid, schedule uploads (Planned / In progress /
@@ -23,7 +23,7 @@
 - **Today** — live data: greeting, next Path step (or start hero), next upload,
   real stats, Path preview.
 - **Tools** — Hook & title tester; Idea vault (Plan-this → Builder).
-- **Celebration confetti** on step-complete / season-complete / publish /
+- **Celebration confetti** on step-complete / phase-complete / publish /
   milestone.
 - **Settings** — manage your subscription/plan, and edit the brand kit
   (name/niche/bio), goal & weekly time, editing software/device, and light/dark.

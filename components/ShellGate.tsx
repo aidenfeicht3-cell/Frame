@@ -8,7 +8,7 @@ import { AppShell } from "./AppShell";
  * or stands on its own. Marketing pages like /welcome bring their own header and
  * footer, so they render bare; everything else is wrapped in the AppShell.
  */
-const BARE_ROUTES = ["/welcome"];
+const BARE_ROUTES = ["/welcome", "/signup"];
 
 export function ShellGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || "/";

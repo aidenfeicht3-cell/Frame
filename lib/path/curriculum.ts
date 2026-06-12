@@ -1,11 +1,11 @@
 import type { Level } from "./types";
 
 /**
- * Season 1 — the beginner on-ramp: zero to your first published video.
+ * Phase 1 — the beginner on-ramp: zero to your first published video.
  * Static, hand-written content (no AI needed). Each level is a small lesson
- * plus one concrete action. Later seasons can be added below.
+ * plus one concrete action. Later phases can be added below.
  */
-export const SEASON1_LEVELS: Level[] = [
+export const PHASE1_LEVELS: Level[] = [
   {
     id: "s1l1",
     title: "Find your first idea",
@@ -72,8 +72,8 @@ export const SEASON1_LEVELS: Level[] = [
   },
 ];
 
-export const SEASON2_PREVIEW = {
-  title: "Season 2 · Consistency & growth",
+export const PHASE2_PREVIEW = {
+  title: "Phase 2 · Consistency & growth",
   blurb:
-    "Hooks that hold, posting on a rhythm, and reading your numbers. Unlocks after Season 1.",
+    "Hooks that hold, posting on a rhythm, and reading your numbers. Unlocks after Phase 1.",
 };

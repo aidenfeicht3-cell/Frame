@@ -34,7 +34,7 @@ a key, the app uses smart built-in sample responses — nothing breaks.
 
 - **Today** — your home: greets you, shows your next Path step, next upload, and
   real streak / weekly / path stats.
-- **The Path** — a leveled journey (Season 1 = zero to your first video). Each
+- **The Path** — a leveled journey (Phase 1 = zero to your first video). Each
   level is a short lesson + one action; finishing one feeds your streak.
 - **Video Builder** — pick an idea → a full production plan revealed one step at
   a time (Hook → Title → Script → Shots → B-roll → Sound → Edit → Publish). The

@@ -117,7 +117,7 @@ const PRO_BULLETS = [
   "Unlimited scripts & videos",
   "Title & hook optimizer",
   "Growth analytics & AI coaching",
-  "Every Path season, start to finish",
+  "Every Path phase, start to finish",
   "Thumbnail Studio (coming soon)",
 ];
 
@@ -184,7 +184,7 @@ function SiteHeader() {
           <Button href="/" variant="ghost" className="hidden sm:inline-flex">
             Open app
           </Button>
-          <Button href="/onboarding">
+          <Button href="/signup">
             Start free <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
@@ -227,7 +227,7 @@ function Hero() {
             like a system.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button href="/onboarding" className="px-6 py-3.5 text-base">
+            <Button href="/signup" className="px-6 py-3.5 text-base">
               Start automating — free <ArrowRight className="h-4 w-4" />
             </Button>
             <Button href="#how" variant="ghost" className="px-6 py-3.5 text-base">
@@ -456,7 +456,7 @@ function Pricing() {
                 <span className="font-display text-4xl font-extrabold">$0</span>
                 <span className="text-sm text-muted"> / forever</span>
               </p>
-              <Button href="/onboarding" variant="secondary" className="mt-5 w-full">
+              <Button href="/signup" variant="secondary" className="mt-5 w-full">
                 Start free
               </Button>
               <BulletList items={FREE_BULLETS} />
@@ -474,7 +474,7 @@ function Pricing() {
                 <span className="font-display text-4xl font-extrabold">$15</span>
                 <span className="text-sm text-muted"> / month</span>
               </p>
-              <Button href="/onboarding" className="mt-5 w-full">
+              <Button href="/signup?plan=pro" className="mt-5 w-full">
                 Start 3-day free trial <ArrowRight className="h-4 w-4" />
               </Button>
               <p className="mt-2 text-center text-xs text-muted">
@@ -567,7 +567,7 @@ function FinalCta() {
               Take the first step now — Frame automates the rest.
             </p>
             <div className="relative mt-7 flex justify-center">
-              <Button href="/onboarding" variant="light" className="px-7 py-3.5 text-base">
+              <Button href="/signup" variant="light" className="px-7 py-3.5 text-base">
                 Start automating — free <ArrowRight className="h-4 w-4" />
               </Button>
             </div>

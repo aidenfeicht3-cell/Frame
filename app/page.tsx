@@ -96,7 +96,7 @@ export default function TodayPage() {
             <>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5" />
-                Season 1 · Step {path.currentIndex + 1}
+                Phase 1 · Step {path.currentIndex + 1}
               </span>
               <div className="space-y-1.5">
                 <p className="text-xs font-medium text-white/70">Your next step</p>
@@ -115,7 +115,7 @@ export default function TodayPage() {
             <>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur">
                 <PartyPopper className="h-3.5 w-3.5" />
-                Season 1 complete
+                Phase 1 complete
               </span>
               <div className="space-y-1.5">
                 <h2 className="font-display text-2xl font-bold tracking-tight">
@@ -179,7 +179,7 @@ export default function TodayPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-display text-lg font-bold">Your Path</h2>
-              <p className="text-xs text-muted">Season 1 · The on-ramp</p>
+              <p className="text-xs text-muted">Phase 1 · The on-ramp</p>
             </div>
             <Link
               href="/path"

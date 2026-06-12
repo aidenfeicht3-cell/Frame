@@ -99,7 +99,7 @@ ends with the Co-Authored-By trailer). Explain steps to Ashton in plain language
 ## Status — see `docs/ROADMAP.md` for the live list
 
 Done: app shell + blue design + logo · Onboarding + AI brand kit + channels to
-study · The Path (Season 1) + streak · Calendar (scheduling, cadence, upcoming,
+study · The Path (Phase 1) + streak · Calendar (scheduling, cadence, upcoming,
 time-of-day) · Progress (manual stats, views-over-time line chart, AI coaching,
 milestones) · Video Builder (editing-software & phone/computer aware) · Today
 (live data) · Hook & title tester · Idea vault · Dark mode · Confetti ·

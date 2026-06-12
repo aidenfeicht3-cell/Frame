@@ -91,6 +91,14 @@ const config: Config = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        "slide-in-left": {
+          "0%": { opacity: "0", transform: "translateX(-24px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.96)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.5s cubic-bezier(0.22,1,0.36,1) both",
@@ -101,6 +109,8 @@ const config: Config = {
         shimmer: "shimmer 6s linear infinite",
         "flow-down": "flow-down 2.8s ease-in-out infinite",
         "pulse-soft": "pulse-soft 2.6s ease-in-out infinite",
+        "slide-in-left": "slide-in-left 0.6s cubic-bezier(0.22,1,0.36,1) both",
+        "scale-in": "scale-in 0.5s cubic-bezier(0.22,1,0.36,1) both",
       },
     },
   },

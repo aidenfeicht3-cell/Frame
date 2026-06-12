@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getCompleted, saveCompleted } from "./store";
-import { SEASON1_LEVELS } from "./curriculum";
+import { PHASE1_LEVELS } from "./curriculum";
 import { markActiveToday } from "@/lib/streak";
 import { celebrate } from "@/lib/celebrate";
 
@@ -24,7 +24,7 @@ export function usePath() {
     if (loaded) saveCompleted(completed);
   }, [completed, loaded]);
 
-  const levels = SEASON1_LEVELS;
+  const levels = PHASE1_LEVELS;
   const completedSet = new Set(completed);
   const currentIndex = levels.findIndex((l) => !completedSet.has(l.id)); // -1 = all done
 
@@ -40,11 +40,11 @@ export function usePath() {
   const complete = useCallback(
     (id: string) => {
       if (completed.includes(id)) return;
-      const willFinishSeason = completed.length + 1 === levels.length;
+      const willFinishPhase = completed.length + 1 === levels.length;
       setCompleted((prev) => (prev.includes(id) ? prev : [...prev, id]));
       markActiveToday();
       celebrate(
-        willFinishSeason ? "Season 1 complete! 🎉" : "Step done — nice! 🔥",
+        willFinishPhase ? "Phase 1 complete! 🎉" : "Step done — nice! 🔥",
       );
     },
     [completed, levels.length],
