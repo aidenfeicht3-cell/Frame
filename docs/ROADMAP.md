@@ -49,7 +49,9 @@ keyed by a hash of its inputs) so we never regenerate or waste credits.
    storage, ~no AI credits. Shows a plain-language summary + 2–3 rule-based tips,
    surfaced as a card on Today. It's the compact context the AI features below
    feed on, which keeps *them* cheap too.
-4. **Creator Score** — one momentum score from activity/consistency. AI-light. Cache it.
+4. **Creator Score** ⏭️ **NEXT** — one momentum score (0–100) from activity/
+   consistency, computed from Frame IQ. AI-light (rule-based score; optional
+   cached coach note). **Full turn-key build plan: [`CREATOR_SCORE.md`](./CREATOR_SCORE.md).**
 5. **Next-Video Roadmap** — AI suggests your next few videos from Frame IQ. Cache; regenerate on demand.
 6. **Retention Analyzer** — AI feedback on a script/video for watch-time. Cache per input.
 7. **Why It Went Viral** — analyses a hit video. **Needs the YouTube API + backend → build last.**
