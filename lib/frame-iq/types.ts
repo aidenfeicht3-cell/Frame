@@ -43,6 +43,7 @@ export type FrameIQ = {
   bestVideo: string; // title of the top-viewed logged video ("" if none)
   streak: number;
   weekActiveCount: number;
+  weekActivity: boolean[]; // last 7 days, oldest → today (true = active that day)
   upcomingUploads: number;
   cadenceLabel: string; // "weekly on Tuesdays" | "no set schedule yet"
   cadenceShort: string; // "weekly" | "now and then"

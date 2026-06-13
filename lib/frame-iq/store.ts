@@ -6,7 +6,12 @@ import { getStageMap } from "@/lib/projects/store";
 import type { StageId } from "@/lib/projects/types";
 import { getIdeas } from "@/lib/ideas/store";
 import { getVideoStats } from "@/lib/analytics/store";
-import { computeStreak, getActiveDates, weekActiveCount } from "@/lib/streak";
+import {
+  computeStreak,
+  getActiveDates,
+  weekActiveCount,
+  weekActivity,
+} from "@/lib/streak";
 import { getCadence, getScheduledPosts } from "@/lib/calendar/store";
 import { toISODate, WEEKDAY_LABELS } from "@/lib/calendar/dates";
 import type { FrameIQ, IQTip } from "./types";
@@ -163,6 +168,7 @@ export function getFrameIQ(): FrameIQ {
   // Streak / activity
   const streak = computeStreak(activeDates);
   const week = weekActiveCount(activeDates);
+  const activity = weekActivity(activeDates);
 
   // Calendar cadence + upcoming
   const todayIso = toISODate(new Date());
@@ -223,6 +229,7 @@ export function getFrameIQ(): FrameIQ {
     bestVideo,
     streak,
     weekActiveCount: week,
+    weekActivity: activity,
     upcomingUploads,
     cadenceLabel,
     cadenceShort,

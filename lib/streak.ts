@@ -36,14 +36,19 @@ export function computeStreak(dates: string[]): number {
   return streak;
 }
 
+/** Active flags for the last 7 days, oldest → today (index 6 = today). */
+export function weekActivity(dates: string[]): boolean[] {
+  const set = new Set(dates);
+  const out: boolean[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    out.push(set.has(toISODate(d)));
+  }
+  return out;
+}
+
 /** How many of the last 7 days were active (for the weekly goal). */
 export function weekActiveCount(dates: string[]): number {
-  const set = new Set(dates);
-  const d = new Date();
-  let count = 0;
-  for (let i = 0; i < 7; i++) {
-    if (set.has(toISODate(d))) count++;
-    d.setDate(d.getDate() - 1);
-  }
-  return count;
+  return weekActivity(dates).filter(Boolean).length;
 }
