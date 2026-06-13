@@ -1,7 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import Link from "next/link";
+import {
+  Check,
+  Loader2,
+  Sparkles,
+  CreditCard,
+  ShieldCheck,
+  Palette,
+  Target,
+  Clapperboard,
+  CalendarDays,
+  SunMoon,
+  ChevronRight,
+  type LucideIcon,
+} from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Toggle } from "@/components/ui/Toggle";
@@ -16,10 +30,7 @@ import {
   inTrial,
   trialDaysLeft,
 } from "@/lib/billing/types";
-import {
-  getEditingSetup,
-  saveEditingSetup,
-} from "@/lib/builder/store";
+import { getEditingSetup, saveEditingSetup } from "@/lib/builder/store";
 import { EDITING_SOFTWARE, type Device } from "@/lib/builder/types";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -31,24 +42,38 @@ const HOURS = [
 const GOAL_IDS: Goal[] = ["first_video", "post_weekly", "1k_subs"];
 
 export default function SettingsPage() {
+  const { profile } = useProfile();
+
   return (
-    <div className="space-y-6 py-2">
-      <header className="space-y-1.5">
-        <h1 className="font-display text-2xl font-bold tracking-tight">
-          Settings
-        </h1>
+    <div className="space-y-7 py-2">
+      <header className="animate-fade-up space-y-1.5">
+        <h1 className="font-display text-2xl font-bold tracking-tight">Settings</h1>
         <p className="text-sm text-muted">
-          Manage your plan, and tweak anything you set up earlier.
+          {profile?.channelName
+            ? `Manage ${profile.channelName} — your plan, channel, and preferences.`
+            : "Manage your plan, channel, and preferences."}
         </p>
       </header>
 
-      <BillingCard />
-      <BrandKitCard />
-      <GoalCard />
-      <EditingCard />
-      <AppearanceCard />
-      <CadenceCard />
-      <AccountCard />
+      <Section label="Plan & account" delay={40}>
+        <BillingCard />
+        <AccountCard />
+      </Section>
+
+      <Section label="Your channel" delay={100}>
+        <FrameIQLink />
+        <BrandKitCard />
+        <GoalCard />
+      </Section>
+
+      <Section label="Workflow" delay={160}>
+        <EditingCard />
+        <CadenceCard />
+      </Section>
+
+      <Section label="Preferences" delay={220}>
+        <AppearanceCard />
+      </Section>
     </div>
   );
 }
@@ -70,9 +95,9 @@ function BillingCard() {
 
   return (
     <SettingCard
-      emoji="💳"
+      icon={CreditCard}
       title="Your plan"
-      desc="Your subscription powers live AI on every video — no setup needed."
+      desc="Your subscription powers live AI on every video — nothing to set up."
       badge={
         loaded ? (
           <span
@@ -91,45 +116,78 @@ function BillingCard() {
         <div className="h-10 animate-pulse rounded-2xl bg-paper" />
       ) : (
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-paper px-4 py-3">
-            <div>
-              <p className="text-sm font-semibold">{planLabel}</p>
-              <p className="text-xs text-muted">{statusText}</p>
-            </div>
-            {isPro && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-success">
+          {/* Current plan — Pro gets the premium gradient treatment */}
+          {isPro ? (
+            <div className="relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 px-4 py-3.5 text-white shadow-soft">
+              <span className="pointer-events-none absolute -right-6 -top-8 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+              <div className="relative">
+                <p className="flex items-center gap-1.5 text-sm font-bold">
+                  <Sparkles className="h-3.5 w-3.5" /> Frame Pro
+                </p>
+                <p className="text-xs text-white/80">{statusText}</p>
+              </div>
+              <span className="relative inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-xs font-semibold backdrop-blur">
                 <Check className="h-3.5 w-3.5" /> Active
               </span>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-paper px-4 py-3.5">
+              <div>
+                <p className="text-sm font-semibold">Free</p>
+                <p className="text-xs text-muted">{statusText}</p>
+              </div>
+            </div>
+          )}
 
           {!isPro ? (
             <>
-              <Button onClick={startTrial}>
+              <Button onClick={startTrial} className="w-full">
                 Start {TRIAL_DAYS}-day free trial <Sparkles className="h-4 w-4" />
               </Button>
-              <p className="text-xs text-muted">
+              <p className="text-xs leading-relaxed text-muted">
                 Unlocks unlimited videos, every Path phase, and live AI coaching.
                 After the trial it&apos;s {PRO_PRICE}/month. Cancel anytime.
               </p>
             </>
           ) : (
             <>
-              <Button variant="ghost" onClick={cancel}>
+              <Button variant="ghost" onClick={cancel} className="w-full">
                 Cancel subscription
               </Button>
-              <p className="text-xs text-muted">
+              <p className="text-xs leading-relaxed text-muted">
                 Manage or cancel anytime — you&apos;ll keep Pro until the end of
                 your billing period.
               </p>
             </>
           )}
-          <p className="text-[11px] text-muted">
+          <div className="flex items-center gap-1.5 border-t border-hairline pt-3 text-[11px] text-muted">
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
             Billing is a preview for now — real checkout is coming soon.
-          </p>
+          </div>
         </div>
       )}
     </SettingCard>
+  );
+}
+
+/* ------------------------------ Frame IQ ------------------------------- */
+
+function FrameIQLink() {
+  return (
+    <Link href="/frame-iq" className="block">
+      <Card interactive className="flex items-center gap-3.5">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
+          <Sparkles className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-base font-bold text-ink">Frame IQ</p>
+          <p className="text-sm text-muted">
+            Your creator profile — niche, setup &amp; progress in one place.
+          </p>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
+      </Card>
+    </Link>
   );
 }
 
@@ -154,7 +212,7 @@ function BrandKitCard() {
   if (loaded && !profile) {
     return (
       <SettingCard
-        emoji="🎨"
+        icon={Palette}
         title="Brand kit"
         desc="Set up your channel name, niche, and bio."
       >
@@ -167,7 +225,7 @@ function BrandKitCard() {
 
   return (
     <SettingCard
-      emoji="🎨"
+      icon={Palette}
       title="Brand kit"
       desc="Your channel name, niche, and bio — change these anytime."
     >
@@ -224,7 +282,7 @@ function GoalCard() {
 
   return (
     <SettingCard
-      emoji="🎯"
+      icon={Target}
       title="Goal & weekly time"
       desc="What you're aiming for, and how much time you can give it."
     >
@@ -302,7 +360,7 @@ function EditingCard() {
 
   return (
     <SettingCard
-      emoji="🎬"
+      icon={Clapperboard}
       title="Editing setup"
       desc="The Builder tailors its edit checklist to this."
     >
@@ -357,26 +415,12 @@ function EditingCard() {
   );
 }
 
-/* ---------------------------- Appearance ------------------------------- */
-
-function AppearanceCard() {
-  const { isDark, toggle } = useTheme();
-  return (
-    <SettingCard emoji="🌗" title="Appearance" desc="Switch between light and dark.">
-      <div className="flex items-center justify-between rounded-2xl border border-hairline bg-paper px-4 py-3">
-        <span className="text-sm font-semibold">Dark mode</span>
-        <Toggle checked={isDark} onChange={toggle} label="Toggle dark mode" />
-      </div>
-    </SettingCard>
-  );
-}
-
 /* ----------------------------- Cadence --------------------------------- */
 
 function CadenceCard() {
   return (
     <SettingCard
-      emoji="🗓️"
+      icon={CalendarDays}
       title="Posting cadence"
       desc="How often you post lives in the Calendar."
     >
@@ -387,15 +431,30 @@ function CadenceCard() {
   );
 }
 
+/* ---------------------------- Appearance ------------------------------- */
+
+function AppearanceCard() {
+  const { isDark, toggle } = useTheme();
+  return (
+    <SettingCard icon={SunMoon} title="Appearance" desc="Switch between light and dark.">
+      <div className="flex items-center justify-between rounded-2xl border border-hairline bg-paper px-4 py-3">
+        <div>
+          <p className="text-sm font-semibold">Dark mode</p>
+          <p className="text-xs text-muted">{isDark ? "On" : "Off"}</p>
+        </div>
+        <Toggle checked={isDark} onChange={toggle} label="Toggle dark mode" />
+      </div>
+    </SettingCard>
+  );
+}
+
+/* ------------------------------ Account -------------------------------- */
+
 /** Sign out — only relevant once real accounts (Supabase) are connected. */
 function AccountCard() {
   if (!isSupabaseConfigured()) return null;
   return (
-    <SettingCard
-      emoji="🔐"
-      title="Account"
-      desc="You're signed in to Frame."
-    >
+    <SettingCard icon={ShieldCheck} title="Account" desc="You're signed in to Frame.">
       <form action="/auth/signout" method="post">
         <Button type="submit" variant="ghost">
           Sign out
@@ -407,14 +466,36 @@ function AccountCard() {
 
 /* ------------------------------- pieces -------------------------------- */
 
+function Section({
+  label,
+  delay = 0,
+  children,
+}: {
+  label: string;
+  delay?: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      className="animate-fade-up space-y-3"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      <h2 className="px-1 text-[11px] font-bold uppercase tracking-wider text-muted">
+        {label}
+      </h2>
+      <div className="space-y-3">{children}</div>
+    </section>
+  );
+}
+
 function SettingCard({
-  emoji,
+  icon: Icon,
   title,
   desc,
   badge,
   children,
 }: {
-  emoji: string;
+  icon: LucideIcon;
   title: string;
   desc: string;
   badge?: React.ReactNode;
@@ -423,8 +504,8 @@ function SettingCard({
   return (
     <Card className="space-y-4">
       <div className="flex items-start gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-lg">
-          {emoji}
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+          <Icon className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
