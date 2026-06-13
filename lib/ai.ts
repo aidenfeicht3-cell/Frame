@@ -2,9 +2,15 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { BrandKit, ChannelToStudy, TitleRating } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
 import type { EditingSetup, ProductionPlan } from "./builder/types";
+import type {
+  NextVideo,
+  NextVideoContext,
+  VideoEffort,
+} from "./roadmap/types";
 import {
   sampleBrandKit,
   sampleChannels,
+  sampleNextVideos,
   samplePerformanceCoaching,
   sampleProductionPlan,
   sampleTitleRating,
@@ -174,6 +180,51 @@ Keep each array to 3-6 short, practical items.`,
   } catch (err) {
     console.error("[ai] production plan failed, using sample:", err);
     return sampleProductionPlan(idea, niche, setup);
+  }
+}
+
+/**
+ * Suggests the creator's next 3 videos from their Frame IQ context. The caller
+ * caches the result by an input hash (see lib/roadmap), so this runs at most
+ * once per state change — never on a loop.
+ */
+const EFFORTS: VideoEffort[] = ["Quick", "Standard", "Ambitious"];
+function normalizeEffort(v: unknown): VideoEffort {
+  return EFFORTS.includes(v as VideoEffort) ? (v as VideoEffort) : "Standard";
+}
+
+export async function getNextVideos(
+  ctx: NextVideoContext,
+): Promise<NextVideo[]> {
+  if (!aiIsLive()) return sampleNextVideos(ctx);
+  try {
+    const text = await ask(
+      "You are a friendly YouTube strategist helping a beginner plan their next few videos. Suggest specific, achievable ideas that build on what's already working. Be concrete and encouraging.",
+      `The creator makes "${ctx.niche || "general"}" videos. They've published ${ctx.publishedCount} video(s)${
+        ctx.bestVideo ? `, and their best so far is "${ctx.bestVideo}"` : ""
+      }. Average retention is ${ctx.avgRetentionPct}%. Stage: ${ctx.stage}.
+Suggest exactly 3 strong next videos that fit this niche and build momentum.
+Return ONLY a JSON array (no markdown) of 3 objects shaped like:
+[{"title":string,"hook":string,"angle":string,"effort":"Quick"|"Standard"|"Ambitious"}]
+- title: a clickable, specific video title
+- hook: a one-sentence opening line that grabs attention
+- angle: one sentence on why this video fits them / the angle to take
+- effort: rough effort to make it (vary it across the three)
+Keep everything beginner-friendly and achievable.`,
+    );
+    const list = parseJSON<NextVideo[]>(text);
+    if (Array.isArray(list) && list.length) {
+      return list.slice(0, 3).map((v) => ({
+        title: String(v.title ?? "").trim() || "Your next video",
+        hook: String(v.hook ?? "").trim(),
+        angle: String(v.angle ?? "").trim(),
+        effort: normalizeEffort(v.effort),
+      }));
+    }
+    return sampleNextVideos(ctx);
+  } catch (err) {
+    console.error("[ai] next videos failed, using sample:", err);
+    return sampleNextVideos(ctx);
   }
 }
 

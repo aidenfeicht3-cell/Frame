@@ -7,6 +7,7 @@ import {
   Loader2,
   Sparkles,
   Gauge,
+  Compass,
   CreditCard,
   ShieldCheck,
   Palette,
@@ -64,6 +65,7 @@ export default function SettingsPage() {
       <Section label="Your channel" delay={100}>
         <FrameIQLink />
         <CreatorScoreLink />
+        <RoadmapLink />
         <BrandKitCard />
         <GoalCard />
       </Section>
@@ -208,6 +210,27 @@ function CreatorScoreLink() {
           </p>
           <p className="text-sm text-muted">
             Your momentum at a glance — one number from 0 to 100.
+          </p>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
+      </Card>
+    </Link>
+  );
+}
+
+function RoadmapLink() {
+  return (
+    <Link href="/roadmap" className="block">
+      <Card interactive className="flex items-center gap-3.5">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
+          <Compass className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-base font-bold text-ink">
+            Next-Video Roadmap
+          </p>
+          <p className="text-sm text-muted">
+            AI-picked ideas for the next videos worth making.
           </p>
         </div>
         <ChevronRight className="h-5 w-5 shrink-0 text-muted" />

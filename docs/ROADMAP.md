@@ -56,8 +56,14 @@ keyed by a hash of its inputs) so we never regenerate or waste credits.
    rule-based coach note pointing at the weakest area. Surfaced as a Today card
    and a Settings link. Optional cached AI coach note is still a later add-on
    (see [`CREATOR_SCORE.md`](./CREATOR_SCORE.md)).
-5. **Next-Video Roadmap** ⏭️ **NEXT** — AI suggests your next few videos from Frame IQ. Cache; regenerate on demand.
-6. **Retention Analyzer** — AI feedback on a script/video for watch-time. Cache per input.
+5. **Next-Video Roadmap** ✅ — AI suggests your next 3 videos from Frame IQ
+   (`lib/roadmap`, `/roadmap`). First AI feature: niche-aware suggestions
+   (title + hook + angle + effort), with a sample fallback when there's no key.
+   **Cached** by an input hash in `frame:nextVideos` (synced to Supabase), so it
+   generates once and only refreshes on an explicit "Regenerate" — never on a
+   loop. Each card has "Plan this" (→ Builder) and "Save to ideas". Surfaced as a
+   Today card and a Settings link.
+6. **Retention Analyzer** ⏭️ **NEXT** — AI feedback on a script/video for watch-time. Cache per input.
 7. **Why It Went Viral** — analyses a hit video. **Needs the YouTube API + backend → build last.**
 
 ## ☁️ Data layer — localStorage → per-user Supabase

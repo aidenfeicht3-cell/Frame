@@ -1,6 +1,7 @@
 import type { BrandKit, ChannelToStudy, TitleRating } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
 import type { EditingSetup, ProductionPlan } from "./builder/types";
+import type { NextVideo, NextVideoContext } from "./roadmap/types";
 
 /**
  * Built-in sample answers used when there's NO Anthropic API key.
@@ -177,6 +178,45 @@ export function sampleProductionPlan(
       "Watch the first 10 seconds one last time — then hit publish. 🎉",
     ],
   };
+}
+
+/**
+ * Three niche-aware "next video" ideas for the no-key case. They mix a low-lift
+ * list video, a personal challenge, and an evergreen guide so a beginner always
+ * has an easy, a fun, and an anchor option to pick from.
+ */
+export function sampleNextVideos(ctx: NextVideoContext): NextVideo[] {
+  const n = ctx.niche.trim() || "your topic";
+  const t = titleCase(n);
+  const lowRetention = ctx.avgRetentionPct > 0 && ctx.avgRetentionPct < 40;
+
+  return [
+    {
+      title: `5 ${t} mistakes beginners make`,
+      hook: lowRetention
+        ? `"If your ${n} isn't working yet, it's probably one of these five things."`
+        : `"If you're new to ${n}, you're probably making at least one of these."`,
+      angle:
+        "List videos are quick to script and easy to follow — high value for low effort, perfect while you build momentum.",
+      effort: "Quick",
+    },
+    {
+      title: `I tried ${n} for 7 days — here's what happened`,
+      hook: `"Everyone says ${n} is worth it, so I put it to the test for a week."`,
+      angle:
+        "A personal challenge format builds trust fast and is genuinely fun to watch — lean into your own story.",
+      effort: "Standard",
+    },
+    {
+      title: ctx.bestVideo
+        ? `The complete beginner's guide to ${n} (everything I've learned)`
+        : `The complete beginner's guide to ${n}`,
+      hook: `"Everything you need to start ${n}, in one video."`,
+      angle:
+        "A flagship guide keeps pulling in new viewers for months — your evergreen anchor video.",
+      effort: "Ambitious",
+    },
+  ];
 }
 
 const POWER_WORDS =

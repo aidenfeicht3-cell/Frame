@@ -13,6 +13,7 @@ import {
   MessageCircle,
   PartyPopper,
   Clapperboard,
+  Compass,
   TrendingUp,
   TrendingDown,
   type LucideIcon,
@@ -250,6 +251,24 @@ export default function TodayPage() {
               </span>
             </div>
             <p className="text-sm leading-snug text-muted">{frameIQ.iq.summary}</p>
+          </Card>
+        </Link>
+      )}
+
+      {/* Next-Video Roadmap quick link */}
+      {onboarded && (
+        <Link href="/roadmap" className="block">
+          <Card interactive className="flex items-center gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+              <Compass className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-ink">Next-Video Roadmap</p>
+              <p className="text-xs text-muted">
+                AI-picked ideas for your next 3 videos
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted" />
           </Card>
         </Link>
       )}

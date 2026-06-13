@@ -26,6 +26,7 @@ import { SYNC_EVENT } from "./event";
 const SYNCED_KEYS: readonly string[] = [
   STORAGE_KEYS.profile,
   STORAGE_KEYS.activeDates, // streak / active days
+  STORAGE_KEYS.nextVideos, // cached Next-Video Roadmap (so we don't regenerate per device)
 ];
 
 const TABLE = "app_state";
