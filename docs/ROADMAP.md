@@ -43,11 +43,12 @@ keyed by a hash of its inputs) so we never regenerate or waste credits.
 
 1. **Project Completion System** ✅ — 8-stage tracker + completion ring (`/projects`).
 2. **Content Vault** ✅ — unified, searchable workspace of ideas + projects (`/vault`).
-3. **Frame IQ** ⏭️ **NEXT** — a cheap personalization layer that aggregates your
-   saved niche, editing setup, and history (projects / ideas / stats / streak)
-   into one "creator profile" the app — and later the AI features — can read.
-   Pure data aggregation, ~no AI credits. It's also the compact context the
-   AI features below feed on, which keeps *them* cheap too.
+3. **Frame IQ** ✅ — a cheap personalization layer (`lib/frame-iq`, `/frame-iq`)
+   that DERIVES one compact "creator profile" from data we already store (niche,
+   editing setup, projects/ideas/stats/streak/cadence) — computed, no new
+   storage, ~no AI credits. Shows a plain-language summary + 2–3 rule-based tips,
+   surfaced as a card on Today. It's the compact context the AI features below
+   feed on, which keeps *them* cheap too.
 4. **Creator Score** — one momentum score from activity/consistency. AI-light. Cache it.
 5. **Next-Video Roadmap** — AI suggests your next few videos from Frame IQ. Cache; regenerate on demand.
 6. **Retention Analyzer** — AI feedback on a script/video for watch-time. Cache per input.

@@ -25,6 +25,7 @@ import { usePath } from "@/lib/path/usePath";
 import { useCalendar } from "@/lib/calendar/useCalendar";
 import { toISODate, formatShort } from "@/lib/calendar/dates";
 import { useProjects } from "@/lib/projects/useProjects";
+import { useFrameIQ } from "@/lib/frame-iq/useFrameIQ";
 
 export default function TodayPage() {
   const { loaded: profileLoaded, profile } = useProfile();
@@ -32,6 +33,7 @@ export default function TodayPage() {
   const path = usePath();
   const cal = useCalendar();
   const projects = useProjects();
+  const frameIQ = useFrameIQ();
 
   const ready = profileLoaded && path.loaded && cal.loaded;
   const onboarded = Boolean(profile);
@@ -206,6 +208,28 @@ export default function TodayPage() {
           tint="brand"
         />
       </section>
+
+      {/* Frame IQ — your creator profile in one line */}
+      {onboarded && frameIQ.iq && (
+        <Link href="/frame-iq" className="block">
+          <Card
+            interactive
+            className="animate-fade-up space-y-2.5"
+            style={{ animationDelay: "150ms" }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600">
+                <Sparkles className="h-4 w-4" />
+              </span>
+              <p className="text-sm font-semibold text-ink">Frame IQ</p>
+              <span className="ml-auto rounded-full bg-brand-50 px-2.5 py-0.5 text-[11px] font-bold text-brand-600">
+                {frameIQ.iq.stage}
+              </span>
+            </div>
+            <p className="text-sm leading-snug text-muted">{frameIQ.iq.summary}</p>
+          </Card>
+        </Link>
+      )}
 
       {/* Vault quick link */}
       {onboarded && (
