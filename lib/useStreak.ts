@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { STORAGE_KEYS } from "./storage";
+import { SYNC_EVENT, type SyncedDetail } from "./sync/event";
 import { computeStreak, getActiveDates, weekActiveCount } from "./streak";
 
 /**
@@ -21,8 +23,20 @@ export function useStreak() {
       setLoaded(true);
     };
     refresh();
+
+    // Re-read when an action marks today active, and when cloud sync pulls a
+    // fresh active-days list down from another device.
+    const onSynced = (e: Event) => {
+      if ((e as CustomEvent<SyncedDetail>).detail?.key === STORAGE_KEYS.activeDates) {
+        refresh();
+      }
+    };
     window.addEventListener("frame:streak", refresh);
-    return () => window.removeEventListener("frame:streak", refresh);
+    window.addEventListener(SYNC_EVENT, onSynced);
+    return () => {
+      window.removeEventListener("frame:streak", refresh);
+      window.removeEventListener(SYNC_EVENT, onSynced);
+    };
   }, []);
 
   return { streak, weekCount, loaded };

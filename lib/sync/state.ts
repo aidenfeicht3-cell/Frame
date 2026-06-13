@@ -23,7 +23,10 @@ import { SYNC_EVENT } from "./event";
  * Storage keys that sync to the cloud. We add one per feature as each is
  * migrated and verified. Everything not listed here stays local-only.
  */
-const SYNCED_KEYS: readonly string[] = [STORAGE_KEYS.profile];
+const SYNCED_KEYS: readonly string[] = [
+  STORAGE_KEYS.profile,
+  STORAGE_KEYS.activeDates, // streak / active days
+];
 
 const TABLE = "app_state";
 const PUSH_DEBOUNCE_MS = 400;
