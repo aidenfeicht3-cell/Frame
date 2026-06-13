@@ -68,5 +68,6 @@ export const STORAGE_KEYS = {
   billing: "frame:billing",
   projectStages: "frame:projectStages",
   vaultFavorites: "frame:vaultFavorites",
+  creatorScore: "frame:creatorScore", // last {score, at} for the daily delta
   // future: goals, ...
 } as const;

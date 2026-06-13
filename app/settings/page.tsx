@@ -6,6 +6,7 @@ import {
   Check,
   Loader2,
   Sparkles,
+  Gauge,
   CreditCard,
   ShieldCheck,
   Palette,
@@ -62,6 +63,7 @@ export default function SettingsPage() {
 
       <Section label="Your channel" delay={100}>
         <FrameIQLink />
+        <CreatorScoreLink />
         <BrandKitCard />
         <GoalCard />
       </Section>
@@ -183,6 +185,29 @@ function FrameIQLink() {
           <p className="font-display text-base font-bold text-ink">Frame IQ</p>
           <p className="text-sm text-muted">
             Your creator profile — niche, setup &amp; progress in one place.
+          </p>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
+      </Card>
+    </Link>
+  );
+}
+
+/* --------------------------- Creator Score ----------------------------- */
+
+function CreatorScoreLink() {
+  return (
+    <Link href="/creator-score" className="block">
+      <Card interactive className="flex items-center gap-3.5">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
+          <Gauge className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-base font-bold text-ink">
+            Creator Score
+          </p>
+          <p className="text-sm text-muted">
+            Your momentum at a glance — one number from 0 to 100.
           </p>
         </div>
         <ChevronRight className="h-5 w-5 shrink-0 text-muted" />

@@ -13,6 +13,8 @@ import {
   MessageCircle,
   PartyPopper,
   Clapperboard,
+  TrendingUp,
+  TrendingDown,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -26,6 +28,7 @@ import { useCalendar } from "@/lib/calendar/useCalendar";
 import { toISODate, formatShort } from "@/lib/calendar/dates";
 import { useProjects } from "@/lib/projects/useProjects";
 import { useFrameIQ } from "@/lib/frame-iq/useFrameIQ";
+import { useCreatorScore } from "@/lib/creator-score/useCreatorScore";
 
 export default function TodayPage() {
   const { loaded: profileLoaded, profile } = useProfile();
@@ -34,6 +37,7 @@ export default function TodayPage() {
   const cal = useCalendar();
   const projects = useProjects();
   const frameIQ = useFrameIQ();
+  const creatorScore = useCreatorScore();
 
   const ready = profileLoaded && path.loaded && cal.loaded;
   const onboarded = Boolean(profile);
@@ -209,6 +213,25 @@ export default function TodayPage() {
         />
       </section>
 
+      {/* Creator Score — momentum at a glance */}
+      {onboarded && creatorScore.cs && (
+        <Link href="/creator-score" className="block">
+          <Card
+            interactive
+            className="animate-fade-up flex items-center gap-4"
+            style={{ animationDelay: "135ms" }}
+          >
+            <MiniRing score={creatorScore.cs.score} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-ink">Creator Score</p>
+              <p className="text-xs text-muted">{creatorScore.cs.tier}</p>
+            </div>
+            <DeltaPill delta={creatorScore.cs.delta} />
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted" />
+          </Card>
+        </Link>
+      )}
+
       {/* Frame IQ — your creator profile in one line */}
       {onboarded && frameIQ.iq && (
         <Link href="/frame-iq" className="block">
@@ -379,6 +402,62 @@ const features: { icon: LucideIcon; tint: string; title: string; desc: string }[
       desc: "Specific, encouraging feedback.",
     },
   ];
+
+/** Compact score gauge for the Today card — brand ring on a light surface. */
+function MiniRing({ score }: { score: number }) {
+  const size = 52;
+  const stroke = 5;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c * (1 - Math.max(0, Math.min(100, score)) / 100);
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          className="stroke-hairline"
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          className="stroke-brand-500"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
+        />
+      </svg>
+      <div className="absolute inset-0 grid place-items-center font-display text-sm font-bold text-ink">
+        {score}
+      </div>
+    </div>
+  );
+}
+
+/** Today's score movement — only shown when there's something to celebrate. */
+function DeltaPill({ delta }: { delta: number | null }) {
+  if (delta === null || delta === 0) return null;
+  const up = delta > 0;
+  const Icon = up ? TrendingUp : TrendingDown;
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[11px] font-bold",
+        up ? "bg-success/10 text-success" : "bg-paper text-muted",
+      )}
+    >
+      <Icon className="h-3 w-3" />
+      {up ? "+" : ""}
+      {delta}
+    </span>
+  );
+}
 
 function Stat({
   icon: Icon,
