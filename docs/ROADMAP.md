@@ -35,6 +35,30 @@
   key, so subscribers get live AI with nothing to set up. Billing in Settings is
   a mock today (`lib/billing/*`) — real checkout (Stripe) comes with the backend.
 
+## 🚀 Bigger build — "operating system for faceless creators"
+
+Seven product features, built **one per chat**, ordered by value-per-credit.
+Every AI-heavy one must **cache its result** (store it in Supabase `app_state`,
+keyed by a hash of its inputs) so we never regenerate or waste credits.
+
+1. **Project Completion System** ✅ — 8-stage tracker + completion ring (`/projects`).
+2. **Content Vault** ✅ — unified, searchable workspace of ideas + projects (`/vault`).
+3. **Frame IQ** ⏭️ **NEXT** — a cheap personalization layer that aggregates your
+   saved niche, editing setup, and history (projects / ideas / stats / streak)
+   into one "creator profile" the app — and later the AI features — can read.
+   Pure data aggregation, ~no AI credits. It's also the compact context the
+   AI features below feed on, which keeps *them* cheap too.
+4. **Creator Score** — one momentum score from activity/consistency. AI-light. Cache it.
+5. **Next-Video Roadmap** — AI suggests your next few videos from Frame IQ. Cache; regenerate on demand.
+6. **Retention Analyzer** — AI feedback on a script/video for watch-time. Cache per input.
+7. **Why It Went Viral** — analyses a hit video. **Needs the YouTube API + backend → build last.**
+
+## ☁️ Data layer — localStorage → per-user Supabase
+
+In progress, one feature at a time (see `lib/sync/`); each account's data follows
+it across devices. **Done:** profile, streak. **Pending:** calendar, path,
+projects, builder, ideas, milestones, analytics, vault, billing.
+
 ## 🔜 Next core screens (buildable now, sample data)
 
 - **Thumbnail Studio** — teach the principles; AI suggests 2–3 concepts + punchy
