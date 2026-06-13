@@ -63,36 +63,45 @@ export default function SignupPage() {
     if (!isSupabaseConfigured()) return finishMock();
 
     setLoading(true);
-    const supabase = createClient();
+    try {
+      const supabase = createClient();
 
-    if (isSignup) {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-      });
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
-      if (data.session) {
-        router.push("/onboarding");
+      if (isSignup) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        });
+        if (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
+        if (data.session) {
+          // Full navigation (not router.push) so the just-set auth cookie is
+          // sent with the request and middleware lets us in — a soft nav can
+          // race the cookie on production and leave the button spinning.
+          window.location.assign("/onboarding");
+        } else {
+          setNotice("Check your email to confirm your account, then log in.");
+          setLoading(false);
+        }
       } else {
-        setNotice("Check your email to confirm your account, then log in.");
-        setLoading(false);
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
+        window.location.assign("/today");
       }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
-      router.push("/today");
+    } catch {
+      // Network blip / unexpected failure — never leave the button stuck.
+      setError("Couldn't reach the server. Check your connection and try again.");
+      setLoading(false);
     }
   };
 
