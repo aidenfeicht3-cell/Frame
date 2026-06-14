@@ -63,8 +63,16 @@ keyed by a hash of its inputs) so we never regenerate or waste credits.
    generates once and only refreshes on an explicit "Regenerate" — never on a
    loop. Each card has "Plan this" (→ Builder) and "Save to ideas". Surfaced as a
    Today card and a Settings link.
-6. **Retention Analyzer** ⏭️ **NEXT** — AI feedback on a script/video for watch-time. Cache per input.
-7. **Why It Went Viral** — analyses a hit video. **Needs the YouTube API + backend → build last.**
+6. **Retention Analyzer** ✅ — paste a script (or outline / transcript) and Frame
+   scores it for watch-time (`lib/retention`, `/retention`): an overall retention
+   score + letter grade, what's working, the risky moments where viewers drop
+   (each with a concrete fix), and first-15-seconds advice. AI-light with a
+   rule-based sample fallback (flags slow intros, weak hooks, walls of text,
+   missing pattern interrupts). **Cached** by a hash of the script in
+   `frame:retention` (synced to Supabase), so re-analyzing the same script costs
+   zero credits. Surfaced as a Today card and a Settings link, with a "Test a
+   hook" cross-link to the Title tester.
+7. **Why It Went Viral** ⏭️ **NEXT** — analyses a hit video. **Needs the YouTube API + backend → build last.**
 
 ## ☁️ Data layer — localStorage → per-user Supabase
 

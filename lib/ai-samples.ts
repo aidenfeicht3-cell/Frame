@@ -2,6 +2,8 @@ import type { BrandKit, ChannelToStudy, TitleRating } from "./ai-types";
 import type { VideoStat } from "./analytics/types";
 import type { EditingSetup, ProductionPlan } from "./builder/types";
 import type { NextVideo, NextVideoContext } from "./roadmap/types";
+import type { RetentionAnalysis, RetentionRisk } from "./retention/types";
+import { gradeForScore } from "./retention/store";
 
 /**
  * Built-in sample answers used when there's NO Anthropic API key.
@@ -217,6 +219,176 @@ export function sampleNextVideos(ctx: NextVideoContext): NextVideo[] {
       effort: "Ambitious",
     },
   ];
+}
+
+/**
+ * Rule-based retention feedback for the no-key case. It reads the pasted script
+ * the way a coach skims it: is the intro slow, is the hook weak, are there walls
+ * of text, are there any pattern interrupts to re-grab attention? Each problem
+ * it spots becomes a risk card with a concrete fix, and it scores the script out
+ * of 100. Niche-aware so the advice feels written for this creator.
+ */
+export function sampleRetentionAnalysis(
+  script: string,
+  niche: string,
+): RetentionAnalysis {
+  const text = script.trim();
+  const n = niche.trim() || "your topic";
+  const lower = text.toLowerCase();
+  const words = text.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+  const paragraphs = text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const openingLower = words.slice(0, 40).join(" ").toLowerCase();
+  const questions = (text.match(/\?/g) || []).length;
+
+  const risks: RetentionRisk[] = [];
+  const strengths: string[] = [];
+  let score = 80; // start strong, deduct for each drop-off risk we spot
+
+  // 1) Slow / housekeeping intro — the #1 early-drop cause for beginners.
+  const slowIntro =
+    /(hey guys|hey everyone|what'?s up guys|welcome back|in this video,? i'?m going to|in today'?s video|before we (get )?start|don'?t forget to (like|subscribe)|smash that|make sure to (like|subscribe)|my name is)/.test(
+      openingLower,
+    );
+  if (slowIntro) {
+    score -= 16;
+    risks.push({
+      moment: "The first 5–10 seconds",
+      issue:
+        "The video opens with a greeting or housekeeping instead of a reason to keep watching — this is exactly where most viewers leave.",
+      fix: "Cut the intro and open on the payoff: the result, the boldest claim, or the question the video answers. Save the welcome and the subscribe ask for later.",
+      severity: "high",
+    });
+  } else {
+    strengths.push(
+      "Your opening skips the generic intro and gets going — that protects those fragile first seconds.",
+    );
+  }
+
+  // 2) Weak hook — no curiosity trigger in the first line.
+  const strongHook =
+    /\?|\byou\b|\byour\b|\bhow\b|\bwhy\b|\bnever\b|\bstop\b|\bmistake\b|\bsecret\b|\d/.test(
+      openingLower,
+    );
+  if (!strongHook) {
+    score -= 12;
+    risks.push({
+      moment: "The hook (first line)",
+      issue:
+        "The first line doesn't create curiosity or speak to the viewer — there's no question, promise, or stakes to pull them in.",
+      fix: `Rewrite line one as a promise or a question, e.g. “Here's the ${n} mistake that's quietly costing you views.”`,
+      severity: "high",
+    });
+  } else {
+    strengths.push(
+      "There's a curiosity trigger up front (a question, a “you”, or a number) — that earns the next few seconds.",
+    );
+  }
+
+  // 3) Walls of text — long unbroken stretches with no visual change.
+  const longParas = paragraphs.filter(
+    (p) => p.split(/\s+/).filter(Boolean).length > 80,
+  );
+  if (longParas.length > 0) {
+    score -= 9;
+    risks.push({
+      moment: `${longParas.length} long stretch${longParas.length > 1 ? "es" : ""} of unbroken talking`,
+      issue:
+        "One or more sections run on without a break, so there's nothing to reset attention and viewers drift.",
+      fix: "Split each long block into shorter beats and plan a visual change — a cut, b-roll, or on-screen text — every 5–10 seconds.",
+      severity: "medium",
+    });
+  } else if (paragraphs.length >= 3) {
+    strengths.push(
+      "Your script is broken into short, digestible sections instead of one wall of text.",
+    );
+  }
+
+  // 4) Missing pattern interrupts across a long script.
+  if (wordCount > 180 && questions === 0) {
+    score -= 9;
+    risks.push({
+      moment: "The middle third",
+      issue:
+        "There are no questions or pattern interrupts to re-grab attention, so the middle can sag and lose people.",
+      fix: "Add a rhetorical question or a quick “but here's the thing…” turn every 30–45 seconds to reset attention.",
+      severity: "medium",
+    });
+  } else if (questions > 0) {
+    strengths.push(
+      "You ask the viewer questions — small pattern interrupts that pull people back in.",
+    );
+  }
+
+  // 5) Very long script — pacing risk.
+  if (wordCount > 1200) {
+    score -= 6;
+    risks.push({
+      moment: "Overall length",
+      issue: `At ~${wordCount} words this is a long watch, and retention usually slides the longer it runs.`,
+      fix: "Cut anything that doesn't serve the one promise of the video. A tighter, shorter cut almost always retains better early on.",
+      severity: "low",
+    });
+  }
+
+  // 6) Too short to judge well — gentle note, not a real penalty.
+  if (wordCount < 40) {
+    risks.push({
+      moment: "Whole script",
+      issue:
+        "There isn't much text here yet, so this is a light read rather than a full analysis.",
+      fix: "Paste your full script, outline, or transcript for sharper, moment-by-moment feedback.",
+      severity: "low",
+    });
+  }
+
+  // Strength: the call-to-action lands later, once it's been earned.
+  const tail = lower.slice(Math.floor(lower.length * 0.6));
+  if (/(subscribe|comment|let me know|check out|next video|down below)/.test(tail)) {
+    strengths.push(
+      "Your call-to-action lands later in the video, once you've earned it — good placement.",
+    );
+  }
+
+  if (strengths.length === 0) {
+    strengths.push(
+      "You've got a real draft down — that's the hard part. The fixes below are small, high-leverage tweaks.",
+    );
+  }
+  if (risks.length === 0) {
+    strengths.push(
+      "No major drop-off risks jumped out — your structure is doing its job.",
+    );
+  }
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  const verdict =
+    score >= 80
+      ? "Strong retention shape — a couple of tweaks and this holds attention well."
+      : score >= 60
+        ? "Solid bones, with a few spots where viewers may drift."
+        : score >= 40
+          ? "Some real drop-off risks here — the fixes below will lift your watch-time."
+          : "The opening and pacing need work before this will hold viewers.";
+
+  const firstFifteen =
+    slowIntro || !strongHook
+      ? `Open cold on the single most interesting moment of your ${n} video — no “hey guys”, no channel intro. Make the very first sentence the promise or the question, flash where it's heading, then start. Earn the next 15 seconds before you ask for anything.`
+      : `Your first 15 seconds already lead with substance — now tighten them: make the opening sentence the clearest version of your promise, drop any throat-clearing words, and tease what's coming so viewers stay for the whole ${n} video.`;
+
+  return {
+    score,
+    grade: gradeForScore(score),
+    verdict,
+    strengths: strengths.slice(0, 4),
+    risks: risks.slice(0, 5),
+    firstFifteen,
+    generatedAt: new Date().toISOString(),
+  };
 }
 
 const POWER_WORDS =

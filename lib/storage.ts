@@ -70,5 +70,6 @@ export const STORAGE_KEYS = {
   vaultFavorites: "frame:vaultFavorites",
   creatorScore: "frame:creatorScore", // last {score, at} for the daily delta
   nextVideos: "frame:nextVideos", // cached {hash, roadmap} for Next-Video Roadmap
+  retention: "frame:retention", // cached {hash, script, analysis} for Retention Analyzer
   // future: goals, ...
 } as const;

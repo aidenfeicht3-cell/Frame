@@ -14,6 +14,7 @@ import {
   PartyPopper,
   Clapperboard,
   Compass,
+  Activity,
   TrendingUp,
   TrendingDown,
   type LucideIcon,
@@ -266,6 +267,24 @@ export default function TodayPage() {
               <p className="text-sm font-semibold text-ink">Next-Video Roadmap</p>
               <p className="text-xs text-muted">
                 AI-picked ideas for your next 3 videos
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted" />
+          </Card>
+        </Link>
+      )}
+
+      {/* Retention Analyzer quick link */}
+      {onboarded && (
+        <Link href="/retention" className="block">
+          <Card interactive className="flex items-center gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+              <Activity className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-ink">Retention Analyzer</p>
+              <p className="text-xs text-muted">
+                Check your script&apos;s watch-time before you film
               </p>
             </div>
             <ArrowRight className="h-4 w-4 shrink-0 text-muted" />

@@ -7,12 +7,19 @@ import type {
   NextVideoContext,
   VideoEffort,
 } from "./roadmap/types";
+import type {
+  RetentionAnalysis,
+  RetentionRisk,
+  RiskSeverity,
+} from "./retention/types";
+import { gradeForScore } from "./retention/store";
 import {
   sampleBrandKit,
   sampleChannels,
   sampleNextVideos,
   samplePerformanceCoaching,
   sampleProductionPlan,
+  sampleRetentionAnalysis,
   sampleTitleRating,
 } from "./ai-samples";
 
@@ -225,6 +232,81 @@ Keep everything beginner-friendly and achievable.`,
   } catch (err) {
     console.error("[ai] next videos failed, using sample:", err);
     return sampleNextVideos(ctx);
+  }
+}
+
+/**
+ * Analyzes a pasted script (or outline / transcript) for watch-time: an overall
+ * retention score + grade, what's working, the risky drop-off moments (each with
+ * a fix), and first-15-seconds advice. The caller caches the result by a hash of
+ * the script (see lib/retention), so this runs once per unique script.
+ */
+const SEVERITIES: RiskSeverity[] = ["high", "medium", "low"];
+function normalizeSeverity(v: unknown): RiskSeverity {
+  return SEVERITIES.includes(v as RiskSeverity) ? (v as RiskSeverity) : "medium";
+}
+
+export async function getRetentionAnalysis(
+  script: string,
+  niche: string,
+): Promise<RetentionAnalysis> {
+  const trimmed = script.trim();
+  if (!aiIsLive() || !trimmed) return sampleRetentionAnalysis(trimmed, niche);
+  // Bound the prompt so a very long script can't run up credits.
+  const clipped = trimmed.slice(0, 8000);
+  try {
+    const text = await ask(
+      "You are a YouTube retention and watch-time expert coaching a nervous beginner. You read a script the way the analytics graph reads the finished video — you find exactly where viewers will drop and give one concrete fix for each. Be specific, honest, and encouraging; never vague.",
+      `Analyze this ${niche ? `"${niche}" ` : ""}video script for retention / watch-time.
+Script:
+"""
+${clipped}
+"""
+Return ONLY a JSON object (no markdown) shaped exactly like:
+{"score": number 0-100, "verdict": one short sentence, "strengths": [2-3 short strings on what's working], "risks": [{"moment": string, "issue": string, "fix": string, "severity": "high"|"medium"|"low"}], "firstFifteen": one short paragraph of advice for the first 15 seconds}
+- score: overall likelihood this holds viewers (be honest; a slow intro or weak hook should cost a lot)
+- risks: 2-4 specific spots where viewers will drop, each with ONE concrete fix; severity = how much it hurts retention
+- firstFifteen: the most important thing to fix or keep in the opening 15 seconds
+Keep everything beginner-friendly and actionable.`,
+    );
+    const raw = parseJSON<{
+      score?: unknown;
+      verdict?: unknown;
+      strengths?: unknown;
+      risks?: unknown;
+      firstFifteen?: unknown;
+    }>(text);
+
+    const risks: RetentionRisk[] = Array.isArray(raw.risks)
+      ? (raw.risks as unknown[]).slice(0, 5).map((r) => {
+          const o = (r ?? {}) as Record<string, unknown>;
+          return {
+            moment: String(o.moment ?? "").trim() || "A drop-off moment",
+            issue: String(o.issue ?? "").trim(),
+            fix: String(o.fix ?? "").trim(),
+            severity: normalizeSeverity(o.severity),
+          };
+        })
+      : [];
+
+    if (typeof raw.score === "number" && (risks.length > 0 || raw.verdict)) {
+      const score = Math.max(0, Math.min(100, Math.round(raw.score)));
+      return {
+        score,
+        grade: gradeForScore(score),
+        verdict: String(raw.verdict ?? "").trim(),
+        strengths: Array.isArray(raw.strengths)
+          ? (raw.strengths as unknown[]).slice(0, 4).map((s) => String(s).trim())
+          : [],
+        risks,
+        firstFifteen: String(raw.firstFifteen ?? "").trim(),
+        generatedAt: new Date().toISOString(),
+      };
+    }
+    return sampleRetentionAnalysis(trimmed, niche);
+  } catch (err) {
+    console.error("[ai] retention analysis failed, using sample:", err);
+    return sampleRetentionAnalysis(trimmed, niche);
   }
 }
 
