@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import {
   Check,
   Loader2,
   Sparkles,
-  Gauge,
-  Compass,
-  Activity,
-  Rocket,
   CreditCard,
   ShieldCheck,
   Palette,
@@ -17,7 +12,6 @@ import {
   Clapperboard,
   CalendarDays,
   SunMoon,
-  ChevronRight,
   type LucideIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -65,11 +59,6 @@ export default function SettingsPage() {
       </Section>
 
       <Section label="Your channel" delay={100}>
-        <FrameIQLink />
-        <CreatorScoreLink />
-        <RoadmapLink />
-        <RetentionLink />
-        <ViralLink />
         <BrandKitCard />
         <GoalCard />
       </Section>
@@ -175,113 +164,6 @@ function BillingCard() {
         </div>
       )}
     </SettingCard>
-  );
-}
-
-/* ------------------------------ Frame IQ ------------------------------- */
-
-function FrameIQLink() {
-  return (
-    <Link href="/frame-iq" className="block">
-      <Card interactive className="flex items-center gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
-          <Sparkles className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold text-ink">Frame IQ</p>
-          <p className="text-sm text-muted">
-            Your creator profile — niche, setup &amp; progress in one place.
-          </p>
-        </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
-      </Card>
-    </Link>
-  );
-}
-
-/* --------------------------- Creator Score ----------------------------- */
-
-function CreatorScoreLink() {
-  return (
-    <Link href="/creator-score" className="block">
-      <Card interactive className="flex items-center gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
-          <Gauge className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold text-ink">
-            Creator Score
-          </p>
-          <p className="text-sm text-muted">
-            Your momentum at a glance — one number from 0 to 100.
-          </p>
-        </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
-      </Card>
-    </Link>
-  );
-}
-
-function RoadmapLink() {
-  return (
-    <Link href="/roadmap" className="block">
-      <Card interactive className="flex items-center gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
-          <Compass className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold text-ink">
-            Next-Video Roadmap
-          </p>
-          <p className="text-sm text-muted">
-            AI-picked ideas for the next videos worth making.
-          </p>
-        </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
-      </Card>
-    </Link>
-  );
-}
-
-function RetentionLink() {
-  return (
-    <Link href="/retention" className="block">
-      <Card interactive className="flex items-center gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
-          <Activity className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold text-ink">
-            Retention Analyzer
-          </p>
-          <p className="text-sm text-muted">
-            Paste a script to see where viewers might drop — with fixes.
-          </p>
-        </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
-      </Card>
-    </Link>
-  );
-}
-
-function ViralLink() {
-  return (
-    <Link href="/viral" className="block">
-      <Card interactive className="flex items-center gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
-          <Rocket className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold text-ink">
-            Why It Went Viral
-          </p>
-          <p className="text-sm text-muted">
-            Paste a hit video to see why it blew up — and what to copy.
-          </p>
-        </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
-      </Card>
-    </Link>
   );
 }
 

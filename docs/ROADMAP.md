@@ -83,6 +83,16 @@ keyed by a hash of its inputs) so we never regenerate or waste credits.
    (without it the live site shows a labelled *sample* video). Owner-only
    retention (your own channel's graph) still needs Google OAuth — a later add-on.
 
+## 🧭 Navigation — the Studio hub
+
+The insight + AI tools used to be buried in Settings. They now live in **Studio**
+(`/studio`, `lib/nav.ts`) — a calm hub that groups them into **Your insights**
+(Frame IQ, Creator Score, Progress), **AI tools** (Next-Video Roadmap, Retention
+Analyzer, Why It Went Viral), and **Library** (Vault). Studio is a primary nav
+item. The desktop sidebar shows the full set; the phone bottom bar stays uncrowded
+(`bottomNavItems` = sidebar minus Progress, which is reachable inside Studio there).
+Settings is back to just settings (plan/billing, brand kit, goal, editing, theme).
+
 ## ☁️ Data layer — localStorage → per-user Supabase
 
 In progress, one feature at a time (see `lib/sync/`); each account's data follows

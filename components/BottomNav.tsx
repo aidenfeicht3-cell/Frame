@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navItems } from "@/lib/nav";
+import { bottomNavItems } from "@/lib/nav";
 import { cn } from "@/lib/cn";
 
 /** Phone-only bottom tab bar. Hidden on desktop (md and up). */
@@ -15,7 +15,7 @@ export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-surface/80 backdrop-blur-xl md:hidden">
       <ul className="mx-auto flex max-w-2xl items-stretch justify-around px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-1.5">
-        {navItems.map((item) => {
+        {bottomNavItems.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
           return (
