@@ -13,6 +13,12 @@ import type {
   RiskSeverity,
 } from "./retention/types";
 import { gradeForScore } from "./retention/store";
+import type {
+  VideoSnapshot,
+  ViralAnalysis,
+  ViralFactor,
+  ViralReason,
+} from "./viral/types";
 import {
   sampleBrandKit,
   sampleChannels,
@@ -21,6 +27,7 @@ import {
   sampleProductionPlan,
   sampleRetentionAnalysis,
   sampleTitleRating,
+  sampleViralAnalysis,
 } from "./ai-samples";
 
 /**
@@ -307,6 +314,71 @@ Keep everything beginner-friendly and actionable.`,
   } catch (err) {
     console.error("[ai] retention analysis failed, using sample:", err);
     return sampleRetentionAnalysis(trimmed, niche);
+  }
+}
+
+/**
+ * Explains why a public YouTube video likely went viral — across its title,
+ * thumbnail, hook, format, and timing — plus what's repeatable for the creator's
+ * niche. The caller caches the result by the video id (see lib/viral), so this
+ * runs once per video.
+ */
+const FACTORS: ViralFactor[] = ["title", "thumbnail", "hook", "format", "timing"];
+function normalizeFactor(v: unknown): ViralFactor {
+  return FACTORS.includes(v as ViralFactor) ? (v as ViralFactor) : "format";
+}
+
+export async function getViralAnalysis(
+  video: VideoSnapshot,
+  niche: string,
+): Promise<ViralAnalysis> {
+  if (!aiIsLive()) return sampleViralAnalysis(video, niche);
+  try {
+    const desc = video.description.slice(0, 600);
+    const text = await ask(
+      "You are a YouTube growth analyst coaching a nervous beginner. You explain why a hit video took off in concrete, specific terms across the title, thumbnail, hook, format, and timing — never generic platitudes — and you always tie it back to what the beginner can copy. You can't see the thumbnail image, so reason about it from the title and topic and say so.",
+      `A YouTube video by "${video.channelTitle}" titled "${video.title}" has ${video.views} views, ${video.likes} likes, and ${video.comments} comments. Published ${video.publishedAt}.${
+        video.tags.length ? ` Tags: ${video.tags.join(", ")}.` : ""
+      }${desc ? ` Description (start): "${desc}"` : ""}
+The creator I'm coaching makes "${niche || "general"}" videos and wants to learn what's repeatable.
+Explain why this video likely performed so well.
+Return ONLY a JSON object (no markdown) shaped exactly like:
+{"verdict": one short sentence on the single biggest reason it took off, "reasons": [{"factor":"title"|"thumbnail"|"hook"|"format"|"timing","label": short heading, "insight": 1-2 sentences on how this drove views}], "repeatable": [2-4 short, concrete things the creator can copy for their own "${niche || "general"}" channel]}
+- reasons: 3-5 items across DIFFERENT factors; be specific to THIS video, not generic.
+- repeatable: actionable for a beginner with a small channel.
+Keep it concrete and encouraging.`,
+    );
+    const raw = parseJSON<{
+      verdict?: unknown;
+      reasons?: unknown;
+      repeatable?: unknown;
+    }>(text);
+
+    const reasons: ViralReason[] = Array.isArray(raw.reasons)
+      ? (raw.reasons as unknown[]).slice(0, 6).map((r) => {
+          const o = (r ?? {}) as Record<string, unknown>;
+          return {
+            factor: normalizeFactor(o.factor),
+            label: String(o.label ?? "").trim() || "A driver of its success",
+            insight: String(o.insight ?? "").trim(),
+          };
+        })
+      : [];
+
+    if (raw.verdict || reasons.length > 0) {
+      return {
+        verdict: String(raw.verdict ?? "").trim(),
+        reasons,
+        repeatable: Array.isArray(raw.repeatable)
+          ? (raw.repeatable as unknown[]).slice(0, 4).map((s) => String(s).trim())
+          : [],
+        generatedAt: new Date().toISOString(),
+      };
+    }
+    return sampleViralAnalysis(video, niche);
+  } catch (err) {
+    console.error("[ai] viral analysis failed, using sample:", err);
+    return sampleViralAnalysis(video, niche);
   }
 }
 

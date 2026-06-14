@@ -15,6 +15,7 @@ import {
   Clapperboard,
   Compass,
   Activity,
+  Rocket,
   TrendingUp,
   TrendingDown,
   type LucideIcon,
@@ -285,6 +286,24 @@ export default function TodayPage() {
               <p className="text-sm font-semibold text-ink">Retention Analyzer</p>
               <p className="text-xs text-muted">
                 Check your script&apos;s watch-time before you film
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted" />
+          </Card>
+        </Link>
+      )}
+
+      {/* Why It Went Viral quick link */}
+      {onboarded && (
+        <Link href="/viral" className="block">
+          <Card interactive className="flex items-center gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+              <Rocket className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-ink">Why It Went Viral</p>
+              <p className="text-xs text-muted">
+                Break down a hit video and copy what worked
               </p>
             </div>
             <ArrowRight className="h-4 w-4 shrink-0 text-muted" />

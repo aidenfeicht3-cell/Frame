@@ -71,5 +71,6 @@ export const STORAGE_KEYS = {
   creatorScore: "frame:creatorScore", // last {score, at} for the daily delta
   nextVideos: "frame:nextVideos", // cached {hash, roadmap} for Next-Video Roadmap
   retention: "frame:retention", // cached {hash, script, analysis} for Retention Analyzer
+  viral: "frame:viral", // cached {id, input, video, analysis} for Why It Went Viral
   // future: goals, ...
 } as const;

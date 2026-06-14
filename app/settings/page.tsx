@@ -9,6 +9,7 @@ import {
   Gauge,
   Compass,
   Activity,
+  Rocket,
   CreditCard,
   ShieldCheck,
   Palette,
@@ -68,6 +69,7 @@ export default function SettingsPage() {
         <CreatorScoreLink />
         <RoadmapLink />
         <RetentionLink />
+        <ViralLink />
         <BrandKitCard />
         <GoalCard />
       </Section>
@@ -254,6 +256,27 @@ function RetentionLink() {
           </p>
           <p className="text-sm text-muted">
             Paste a script to see where viewers might drop — with fixes.
+          </p>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted" />
+      </Card>
+    </Link>
+  );
+}
+
+function ViralLink() {
+  return (
+    <Link href="/viral" className="block">
+      <Card interactive className="flex items-center gap-3.5">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-soft">
+          <Rocket className="h-5 w-5" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-display text-base font-bold text-ink">
+            Why It Went Viral
+          </p>
+          <p className="text-sm text-muted">
+            Paste a hit video to see why it blew up — and what to copy.
           </p>
         </div>
         <ChevronRight className="h-5 w-5 shrink-0 text-muted" />

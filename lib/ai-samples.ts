@@ -4,6 +4,11 @@ import type { EditingSetup, ProductionPlan } from "./builder/types";
 import type { NextVideo, NextVideoContext } from "./roadmap/types";
 import type { RetentionAnalysis, RetentionRisk } from "./retention/types";
 import { gradeForScore } from "./retention/store";
+import type {
+  VideoSnapshot,
+  ViralAnalysis,
+  ViralReason,
+} from "./viral/types";
 
 /**
  * Built-in sample answers used when there's NO Anthropic API key.
@@ -387,6 +392,132 @@ export function sampleRetentionAnalysis(
     strengths: strengths.slice(0, 4),
     risks: risks.slice(0, 5),
     firstFifteen,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Rule-based "why it went viral" analysis for the no-key case. It reads the
+ * video's real title + public stats and reasons about the five levers (title,
+ * thumbnail, hook, format, timing) the way a coach would, then turns each into a
+ * reason card plus a short list of repeatable moves for the creator's niche.
+ * The thumbnail reason is explicitly an inference (we can't see the image).
+ */
+export function sampleViralAnalysis(
+  video: VideoSnapshot,
+  niche: string,
+): ViralAnalysis {
+  const n = niche.trim() || "your topic";
+  const title = video.title.trim() || "this video";
+  const lower = title.toLowerCase();
+
+  const hasNumber = /\d/.test(title);
+  const isQuestion = title.includes("?");
+  const hasBracket = /[[(].+[\])]/.test(title);
+  const isHowTo = /(how to|how i|guide|tutorial|step[- ]by[- ]step)/.test(lower);
+  const isChallenge =
+    /(\b\d+\s*(day|days|hour|hours|week|weeks)\b|i tried|i spent|challenge|for \d+)/.test(
+      lower,
+    );
+  const isVs = /(\bvs\b|versus|tier list|ranking|ranked|worst|best)/.test(lower);
+  const hasPowerWord =
+    /(secret|mistake|truth|honest|never|stop|ultimate|easy|fast|nobody|everyone|why|finally|insane|crazy|wish)/.test(
+      lower,
+    );
+
+  const views = video.views;
+  const likeRate = views ? (video.likes / views) * 100 : 0;
+  const commentRate = views ? (video.comments / views) * 100 : 0;
+
+  const reasons: ViralReason[] = [];
+
+  // 1) Title — the single biggest click-through lever.
+  const titleBits: string[] = [];
+  if (hasNumber) titleBits.push("a specific number");
+  if (isQuestion) titleBits.push("an open question");
+  if (hasBracket) titleBits.push("a bracketed promise");
+  if (hasPowerWord) titleBits.push("a curiosity word");
+  reasons.push({
+    factor: "title",
+    label: titleBits.length
+      ? `The title leans on ${titleBits.join(" + ")}`
+      : "A clear, specific title",
+    insight: `"${title}" makes one concrete promise you can grasp in a second${
+      hasNumber ? " — the number sets a clear expectation" : ""
+    }. Specific beats clever for click-through.`,
+  });
+
+  // 2) Thumbnail — inferred, since we can't see the image.
+  reasons.push({
+    factor: "thumbnail",
+    label: "A thumbnail that pairs with — not repeats — the title",
+    insight:
+      "Videos at this scale almost always pair a high-contrast, single-subject thumbnail with the title so the two together tell one story. Picture one bold focal point and 1–3 huge words.",
+  });
+
+  // 3) Hook — the first 5 seconds.
+  reasons.push({
+    factor: "hook",
+    label: isChallenge ? "A stakes-driven opening" : "A payoff-first opening",
+    insight: isChallenge
+      ? "The format implies the first seconds set the stakes — what was attempted and what's on the line — so viewers stay to see how it ends."
+      : "Hits this size almost always open on the payoff or boldest claim in the first 5 seconds, with no slow intro, which protects early retention.",
+  });
+
+  // 4) Format — the repeatable container.
+  const formatLabel = isChallenge
+    ? "A challenge / experiment format"
+    : isVs
+      ? "A comparison / ranking format"
+      : isHowTo
+        ? "A focused how-to format"
+        : "A proven, repeatable format";
+  reasons.push({
+    factor: "format",
+    label: formatLabel,
+    insight: isChallenge
+      ? "Challenge formats build narrative tension — a beginning, a struggle, a result — that pulls people to the end, and they template again easily."
+      : isVs
+        ? "Comparisons and rankings invite the viewer to take a side, which lifts both watch-time and comments."
+        : isHowTo
+          ? "A focused how-to delivers obvious value, so it keeps earning views from search and suggested long after upload."
+          : "It uses a structure viewers already know how to watch, which lowers the effort to press play.",
+  });
+
+  // 5) Timing / momentum — engagement is the proof the algorithm leaned on.
+  const proof =
+    likeRate >= 4
+      ? `An unusually high like rate (~${likeRate.toFixed(1)}% of views) told the algorithm people loved it, so it kept getting pushed.`
+      : commentRate >= 0.5
+        ? `A strong comment rate (~${commentRate.toFixed(2)}% of views) signalled a conversation worth surfacing.`
+        : `Steady engagement against its ${views.toLocaleString()} views signalled the algorithm to keep recommending it.`;
+  reasons.push({
+    factor: "timing",
+    label: "Engagement that fed the algorithm",
+    insight: `${proof} Early likes and comments in the first 24–48 hours are what turn a good video into a viral one.`,
+  });
+
+  const repeatable = [
+    hasNumber
+      ? `Borrow the title shape for ${n}: lead with a number or a bold claim, then one concrete promise.`
+      : `Give your next ${n} title one specific, concrete promise — not a clever phrase.`,
+    isChallenge
+      ? `Try this challenge format on ${n}: "I tried ___ for X days" gives you a built-in beginning, middle, and end.`
+      : `Reuse this ${formatLabel.toLowerCase()} for ${n} and template it so you can make it again quickly.`,
+    `Open your ${n} video on the payoff in the first 5 seconds — show the result before you explain it.`,
+    "Design the thumbnail and title as a pair: one bold subject, 1–3 huge words, no repeated text.",
+  ].slice(0, 4);
+
+  const verdict = isChallenge
+    ? "It likely took off because a challenge format turns curiosity into a story people finish."
+    : hasNumber || hasPowerWord
+      ? "The biggest driver is a title + thumbnail combo that promises one specific, irresistible thing."
+      : "It earned its views by pairing a proven format with a clear promise and a payoff-first opening.";
+
+  return {
+    verdict,
+    reasons: reasons.slice(0, 5),
+    repeatable,
     generatedAt: new Date().toISOString(),
   };
 }

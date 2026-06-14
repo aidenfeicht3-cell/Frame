@@ -28,6 +28,7 @@ const SYNCED_KEYS: readonly string[] = [
   STORAGE_KEYS.activeDates, // streak / active days
   STORAGE_KEYS.nextVideos, // cached Next-Video Roadmap (so we don't regenerate per device)
   STORAGE_KEYS.retention, // cached Retention Analyzer result (so we don't re-analyze per device)
+  STORAGE_KEYS.viral, // cached Why-It-Went-Viral breakdown (so we don't re-analyze per device)
 ];
 
 const TABLE = "app_state";

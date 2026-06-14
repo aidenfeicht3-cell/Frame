@@ -72,12 +72,22 @@ keyed by a hash of its inputs) so we never regenerate or waste credits.
    `frame:retention` (synced to Supabase), so re-analyzing the same script costs
    zero credits. Surfaced as a Today card and a Settings link, with a "Test a
    hook" cross-link to the Title tester.
-7. **Why It Went Viral** ⏭️ **NEXT** — analyses a hit video. **Needs the YouTube API + backend → build last.**
+7. **Why It Went Viral** ✅ — paste a public YouTube link/ID → Frame pulls the
+   video's public stats (`lib/youtube` `getVideoById`, key-only, no OAuth) and an
+   AI explains *why it likely went viral* across title, thumbnail, hook, format,
+   and timing, plus what's repeatable for your niche (`lib/viral`, `/viral`).
+   **Cached** by video id in `frame:viral` (synced to Supabase), so re-analyzing
+   the same video costs zero credits. Sample video + sample-AI fallback so it
+   runs key-free. Surfaced as a Today card and a Settings link, with a "Test your
+   own title" cross-link. ⚠️ **Prod needs `YOUTUBE_API_KEY` in Vercel env vars**
+   (without it the live site shows a labelled *sample* video). Owner-only
+   retention (your own channel's graph) still needs Google OAuth — a later add-on.
 
 ## ☁️ Data layer — localStorage → per-user Supabase
 
 In progress, one feature at a time (see `lib/sync/`); each account's data follows
-it across devices. **Done:** profile, streak. **Pending:** calendar, path,
+it across devices. **Done:** profile, streak, and the cached AI results
+(Next-Video Roadmap, Retention, Why-It-Went-Viral). **Pending:** calendar, path,
 projects, builder, ideas, milestones, analytics, vault, billing.
 
 ## 🔜 Next core screens (buildable now, sample data)
