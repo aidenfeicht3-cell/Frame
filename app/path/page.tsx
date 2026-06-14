@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Lock, PartyPopper } from "lucide-react";
+import { Check, Lock, PartyPopper, Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
@@ -65,6 +65,17 @@ export default function PathPage() {
                         </div>
                       </div>
                       <p className="text-sm text-ink">{lvl.lesson}</p>
+                      {lvl.tip && (
+                        <div className="flex items-start gap-2 rounded-2xl bg-brand-50/60 px-3 py-2.5">
+                          <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                          <p className="text-sm leading-snug text-ink">
+                            <span className="font-semibold text-brand-700">
+                              Tip:{" "}
+                            </span>
+                            {lvl.tip}
+                          </p>
+                        </div>
+                      )}
                       <div className="rounded-2xl border border-hairline bg-surface p-3">
                         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">
                           Do this · ~{lvl.estMinutes} min

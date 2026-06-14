@@ -49,6 +49,15 @@ import {
 // The user asked for the Sonnet family; this is the current Sonnet model.
 const MODEL = "claude-sonnet-4-6";
 
+/**
+ * Shared voice for every prompt below, so all of Frame's AI output sounds like
+ * one calm, beginner-first coach. Each function appends its specific task after
+ * this. Keeping it in one place means the product's tone stays consistent and is
+ * easy to tune.
+ */
+const BRAND_VOICE =
+  "You are the coaching voice inside Frame, an app that takes complete-beginner YouTubers (zero subscribers, easily overwhelmed) to their first published videos. Be warm, calm, and concrete. Write in plain, everyday language a nervous beginner instantly understands: short sentences, no jargon, and no acronym you don't briefly explain. Always favour one specific, doable next step over theory. Never use hype or fake urgency, never guilt-trip, never promise views or growth you can't guarantee, and never invent fake numbers, channels, statistics, or quotes.";
+
 export function aiIsLive(): boolean {
   return Boolean(process.env.ANTHROPIC_API_KEY);
 }
@@ -86,13 +95,14 @@ export async function getBrandKit(niche: string): Promise<BrandKit> {
   if (!aiIsLive()) return sampleBrandKit(niche);
   try {
     const text = await ask(
-      "You are a warm, encouraging branding helper for complete-beginner YouTubers with zero subscribers. Keep everything simple and easy to act on.",
+      `${BRAND_VOICE} Right now you're naming and shaping a brand-new channel so it feels clear and inviting from day one.`,
       `Return ONLY a JSON object (no markdown) shaped exactly like:
 {"names":[string,string,string],"bio":string,"bannerConcept":string,"pfpConcept":string}
 - names: 3 short, friendly channel-name ideas
 - bio: a warm 2-sentence channel bio
 - bannerConcept: 1-2 sentences describing a simple banner
 - pfpConcept: 1-2 sentences describing a simple profile picture
+Make the names easy to say out loud and spell — no numbers, hyphens, or tired clichés like "HQ", "TV", "Central", or "Official". The bio should say who it helps and what they get.
 The niche is: "${niche}".`,
     );
     const kit = parseJSON<BrandKit>(text);
@@ -110,12 +120,12 @@ export async function getChannelsToStudy(
   if (!aiIsLive()) return sampleChannels(niche);
   try {
     const text = await ask(
-      "You help complete-beginner YouTubers learn from existing creators. Be specific and practical. Never invent fake channels or subscriber counts.",
+      `${BRAND_VOICE} Right now you're helping the creator learn from channels that already do their niche well. Point only to real, well-known creators or clear channel archetypes — never made-up names or subscriber counts.`,
       `Return ONLY a JSON array (no markdown) of exactly 3 objects shaped like:
 [{"name":string,"why":string,"steal":string,"searchUrl":string}]
 - name: a TYPE/style of channel to study (an archetype or genuinely well-known example), not a made-up channel
 - why: 1 sentence on why studying it helps a beginner
-- steal: 1 concrete thing to borrow (hook, format, thumbnail style, ...)
+- steal: ONE specific, copyable tactic to borrow (a hook pattern, a video format, a thumbnail style) — not vague advice like "be consistent"
 - searchUrl: a https://www.youtube.com/results?search_query=... link to find examples
 The niche is: "${niche}".`,
     );
@@ -155,9 +165,9 @@ export async function getPerformanceCoaching(
   if (!aiIsLive()) return samplePerformanceCoaching(stat);
   try {
     const text = await ask(
-      "You are a warm, encouraging YouTube coach for a nervous beginner. Be specific and practical. Never guilt-trip; always point to the next action.",
+      `${BRAND_VOICE} Right now you're reading one video's real numbers to make the NEXT video better.`,
       `A video titled "${stat.title}" got ${stat.views} views, ${stat.likes} likes, ${stat.comments} comments, and ${stat.retentionPct}% average retention.
-Return ONLY a JSON array of 2-3 short strings — each a specific, encouraging tip for making the NEXT video better.`,
+Return ONLY a JSON array of 2-3 short strings. Each tip names ONE concrete change for the next video and ties to the numbers above — no generic "just keep posting" filler.`,
     );
     const tips = parseJSON<string[]>(text);
     if (Array.isArray(tips) && tips.length) {
@@ -179,12 +189,12 @@ export async function getProductionPlan(
   if (!aiIsLive()) return sampleProductionPlan(idea, niche, setup);
   try {
     const text = await ask(
-      "You are a friendly producer helping a beginner YouTuber plan one video. Be concrete, encouraging, and easy to follow.",
+      `${BRAND_VOICE} Right now you're producing one specific video together, from idea to upload.`,
       `Plan a video. Niche: "${niche}". Idea: "${idea}".
 The creator edits with "${setup.software}" on ${setup.device === "mobile" ? "their phone" : "a computer"} — make the editChecklist specific to that.
 Return ONLY a JSON object shaped exactly like:
 {"hooks":[string,string,string],"titles":[string,string,string],"scriptOutline":[string,...],"shotList":[string,...],"bRoll":[string,...],"sound":[string,...],"editChecklist":[string,...],"publishChecklist":[string,...]}
-Keep each array to 3-6 short, practical items.`,
+Make the hooks, titles, and outline specific to THIS idea — not fill-in-the-blank templates. Keep each array to 3-6 short, practical items.`,
     );
     const plan = parseJSON<ProductionPlan>(text);
     if (plan && Array.isArray(plan.hooks) && Array.isArray(plan.editChecklist)) {
@@ -213,7 +223,7 @@ export async function getNextVideos(
   if (!aiIsLive()) return sampleNextVideos(ctx);
   try {
     const text = await ask(
-      "You are a friendly YouTube strategist helping a beginner plan their next few videos. Suggest specific, achievable ideas that build on what's already working. Be concrete and encouraging.",
+      `${BRAND_VOICE} Right now you're a strategist suggesting the next few videos that build on what's already working for them.`,
       `The creator makes "${ctx.niche || "general"}" videos. They've published ${ctx.publishedCount} video(s)${
         ctx.bestVideo ? `, and their best so far is "${ctx.bestVideo}"` : ""
       }. Average retention is ${ctx.avgRetentionPct}%. Stage: ${ctx.stage}.
@@ -263,7 +273,7 @@ export async function getRetentionAnalysis(
   const clipped = trimmed.slice(0, 8000);
   try {
     const text = await ask(
-      "You are a YouTube retention and watch-time expert coaching a nervous beginner. You read a script the way the analytics graph reads the finished video — you find exactly where viewers will drop and give one concrete fix for each. Be specific, honest, and encouraging; never vague.",
+      `${BRAND_VOICE} You are also a retention and watch-time expert: you read a script the way the analytics graph reads the finished video — finding exactly where viewers will drop and giving one concrete fix for each. Be honest about weak spots; never vague.`,
       `Analyze this ${niche ? `"${niche}" ` : ""}video script for retention / watch-time.
 Script:
 """
@@ -336,7 +346,7 @@ export async function getViralAnalysis(
   try {
     const desc = video.description.slice(0, 600);
     const text = await ask(
-      "You are a YouTube growth analyst coaching a nervous beginner. You explain why a hit video took off in concrete, specific terms across the title, thumbnail, hook, format, and timing — never generic platitudes — and you always tie it back to what the beginner can copy. You can't see the thumbnail image, so reason about it from the title and topic and say so.",
+      `${BRAND_VOICE} You are also a growth analyst: you explain why a hit video took off in concrete, specific terms across title, thumbnail, hook, format, and timing — never generic platitudes — and always tie it back to what the beginner can copy. You can't see the thumbnail image, so reason about it from the title and topic, and say so.`,
       `A YouTube video by "${video.channelTitle}" titled "${video.title}" has ${video.views} views, ${video.likes} likes, and ${video.comments} comments. Published ${video.publishedAt}.${
         video.tags.length ? ` Tags: ${video.tags.join(", ")}.` : ""
       }${desc ? ` Description (start): "${desc}"` : ""}
@@ -387,7 +397,7 @@ export async function getTitleRating(text: string): Promise<TitleRating> {
   if (!aiIsLive()) return sampleTitleRating(text);
   try {
     const out = await ask(
-      "You are a YouTube title/hook expert helping a beginner. Be honest but encouraging.",
+      `${BRAND_VOICE} Right now you're rating one title or hook and offering stronger versions.`,
       `Rate this video title or hook for click-appeal and suggest stronger versions.
 Title/hook: "${text}"
 Return ONLY a JSON object: {"score": number 1-10, "verdict": one short sentence, "rewrites": [2-3 stronger versions as strings]}`,

@@ -532,9 +532,12 @@ export function sampleTitleRating(text: string): TitleRating {
   let score = 5;
   if (/\d/.test(t)) score += 1; // a number adds specificity
   if (POWER_WORDS.test(lower)) score += 1; // curiosity / power word
-  if (t.length >= 20 && t.length <= 60) score += 1; // clickable length
-  if (t.length > 72) score -= 1; // too long for mobile
+  if (/\byou\b|\byour\b/.test(lower)) score += 1; // speaks to the viewer
   if (t.includes("?")) score += 1; // a question pulls curiosity
+  if (t.length >= 20 && t.length <= 60) score += 1; // clickable, fits on mobile
+  if (t.length > 0 && t.length < 15) score -= 1; // too vague to promise much
+  if (t.length > 72) score -= 1; // gets cut off on mobile
+  if (/[A-Z]{6,}/.test(t.replace(/\s/g, ""))) score -= 1; // shouty / clickbait caps
   if (!t) score = 1;
   score = Math.max(1, Math.min(10, score));
 
@@ -545,11 +548,12 @@ export function sampleTitleRating(text: string): TitleRating {
         ? "Decent — a small tweak could push it higher."
         : "Needs work — let's make it pull people in.";
 
-  const base = t.replace(/[?.!]+$/, "") || "your topic";
+  const base = t.replace(/[?.!]+$/, "").trim() || "your topic";
+  const lowerBase = base.toLowerCase();
   const rewrites = [
-    `How to ${base.toLowerCase()} (the easy way)`,
-    `${base}: 5 mistakes beginners make`,
-    `I tried ${base.toLowerCase()} so you don't have to`,
+    `How to ${lowerBase} (even if you're a total beginner)`,
+    `${titleCase(base)}: the 5 mistakes to avoid`,
+    `I tried ${lowerBase} for a week — here's what happened`,
   ];
 
   return { score, verdict, rewrites };

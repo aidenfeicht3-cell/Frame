@@ -109,11 +109,13 @@ export function weakestPart(parts: ScorePart[]): ScorePart {
 
 const NOTE_BY_PART: Record<ScorePart["key"], string> = {
   consistency:
-    "Your score climbs fastest when you show up — one Path step today.",
-  output: "Finishing a video moves this the most. Pick the one closest to done.",
+    "Your score climbs fastest when you show up. One quick Path step today keeps the streak alive.",
+  output:
+    "Shipping moves this the most — finish the video closest to done before starting a new one.",
   pipeline:
-    "Line up your next moves: save a few ideas and set a weekly posting day.",
-  insight: "Log your videos' stats so Frame can learn what's working for you.",
+    "Set up your next moves: save a few ideas and lock in one weekly posting day.",
+  insight:
+    "Log each video's views and retention so Frame can learn what's working for you.",
 };
 
 /** A gentle, rule-based coach line pointing at the weakest area. */

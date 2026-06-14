@@ -111,6 +111,11 @@ projects, builder, ideas, milestones, analytics, vault, billing.
 
 ## 🔒 Needs the backend / accounts (stubbed in `lib/youtube.ts`)
 
+> Ready-to-paste kickoff prompts for all of these live in
+> [`BACKEND_PROMPTS.md`](./BACKEND_PROMPTS.md): Stripe checkout, connect-channel
+> analytics (owner OAuth), the data-layer migration, and comment replies.
+
+
 - **Accounts + subscription billing** — real sign-up/login and Stripe checkout
   for the 3-day trial → Frame Pro. The Billing section in Settings is mock today
   (`lib/billing/*`); swap the store for Stripe and the screen stays. Gate Pro-only
