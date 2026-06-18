@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { STORAGE_KEYS } from "@/lib/storage";
+import { SYNC_EVENT, type SyncedDetail } from "@/lib/sync/event";
 import {
   getCadence,
   getScheduledPosts,
@@ -31,6 +33,16 @@ export function useCalendar() {
     setPosts(getScheduledPosts());
     setCadence(getCadence());
     setLoaded(true);
+
+    // When cloud sync pulls fresh calendar data (e.g. signing in on a new
+    // device), re-read it so the UI reflects the synced value without a reload.
+    const onSynced = (e: Event) => {
+      const key = (e as CustomEvent<SyncedDetail>).detail?.key;
+      if (key === STORAGE_KEYS.scheduledPosts) setPosts(getScheduledPosts());
+      if (key === STORAGE_KEYS.cadence) setCadence(getCadence());
+    };
+    window.addEventListener(SYNC_EVENT, onSynced);
+    return () => window.removeEventListener(SYNC_EVENT, onSynced);
   }, []);
 
   // Persist on change (but not before the initial load has run).

@@ -29,6 +29,19 @@ const SYNCED_KEYS: readonly string[] = [
   STORAGE_KEYS.nextVideos, // cached Next-Video Roadmap (so we don't regenerate per device)
   STORAGE_KEYS.retention, // cached Retention Analyzer result (so we don't re-analyze per device)
   STORAGE_KEYS.viral, // cached Why-It-Went-Viral breakdown (so we don't re-analyze per device)
+  // --- data-layer migration (one feature at a time; remote-wins on a fresh device) ---
+  STORAGE_KEYS.scheduledPosts, // calendar: scheduled uploads
+  STORAGE_KEYS.cadence, // calendar: recurring cadence
+  STORAGE_KEYS.pathCompleted, // path: completed levels
+  STORAGE_KEYS.videoProjects, // builder: saved video projects
+  STORAGE_KEYS.editingSetup, // builder: editing software/device
+  STORAGE_KEYS.ideas, // idea vault entries
+  STORAGE_KEYS.milestones, // progress milestones
+  STORAGE_KEYS.projectStages, // projects: per-project stage progress
+  STORAGE_KEYS.vaultFavorites, // vault: favorited items
+  STORAGE_KEYS.videoStats, // analytics: logged video stats
+  // NOTE: billing (frame:billing) is intentionally NOT synced here — the Stripe
+  // webhook owns the plan once real checkout is live (see BACKEND_PROMPTS #1).
 ];
 
 const TABLE = "app_state";

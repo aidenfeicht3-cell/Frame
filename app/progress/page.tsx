@@ -10,7 +10,6 @@ import {
   Trash2,
   Sparkles,
   Loader2,
-  Link2,
   Target,
   TrendingUp,
   TrendingDown,
@@ -19,6 +18,7 @@ import {
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ViewsLineChart } from "@/components/analytics/ViewsLineChart";
+import { ConnectChannelCard } from "@/components/analytics/ConnectChannelCard";
 import { LogVideoSheet } from "@/components/analytics/LogVideoSheet";
 import { MilestoneSheet } from "@/components/analytics/MilestoneSheet";
 import { useAnalytics } from "@/lib/analytics/useAnalytics";
@@ -350,22 +350,8 @@ export default function ProgressPage() {
         </Card>
       )}
 
-      {/* Connect channel — coming soon (real YouTube data after backend) */}
-      <Card className="flex items-center gap-3 border-dashed">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-paper text-muted">
-          <Link2 className="h-5 w-5" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold">Connect your channel</p>
-          <p className="text-xs text-muted">
-            Graph your real daily views &amp; subscriber growth — every peak and
-            drop. Coming once accounts are set up.
-          </p>
-        </div>
-        <span className="shrink-0 rounded-full bg-paper px-2.5 py-1 text-[11px] font-semibold text-muted">
-          Soon
-        </span>
-      </Card>
+      {/* Connect your channel → live daily views (real YouTube owner OAuth). */}
+      <ConnectChannelCard />
 
       <LogVideoSheet
         open={sheetOpen}

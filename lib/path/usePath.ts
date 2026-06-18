@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { STORAGE_KEYS } from "@/lib/storage";
+import { SYNC_EVENT, type SyncedDetail } from "@/lib/sync/event";
 import { getCompleted, saveCompleted } from "./store";
 import { PHASE1_LEVELS } from "./curriculum";
 import { markActiveToday } from "@/lib/streak";
@@ -18,6 +20,15 @@ export function usePath() {
   useEffect(() => {
     setCompleted(getCompleted());
     setLoaded(true);
+
+    // Re-read when cloud sync pulls fresh Path progress from another device.
+    const onSynced = (e: Event) => {
+      if ((e as CustomEvent<SyncedDetail>).detail?.key === STORAGE_KEYS.pathCompleted) {
+        setCompleted(getCompleted());
+      }
+    };
+    window.addEventListener(SYNC_EVENT, onSynced);
+    return () => window.removeEventListener(SYNC_EVENT, onSynced);
   }, []);
 
   useEffect(() => {

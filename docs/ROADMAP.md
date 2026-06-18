@@ -95,10 +95,14 @@ Settings is back to just settings (plan/billing, brand kit, goal, editing, theme
 
 ## ☁️ Data layer — localStorage → per-user Supabase
 
-In progress, one feature at a time (see `lib/sync/`); each account's data follows
-it across devices. **Done:** profile, streak, and the cached AI results
-(Next-Video Roadmap, Retention, Why-It-Went-Viral). **Pending:** calendar, path,
-projects, builder, ideas, milestones, analytics, vault, billing.
+Each account's data follows it across devices (see `lib/sync/`). **Done — all
+feature keys now sync:** profile, streak, cached AI results (Next-Video Roadmap,
+Retention, Why-It-Went-Viral), calendar (scheduledPosts + cadence), path,
+builder (videoProjects + editingSetup), ideas, milestones, projects
+(projectStages), vault (vaultFavorites), analytics (videoStats). **Excluded on
+purpose:** billing — the Stripe webhook owns the plan (see BACKEND_PROMPTS #1).
+Pattern: add the key to `SYNCED_KEYS`, add a `frame:synced` re-read listener to
+the feature's `use*.ts`. Remote-wins on a fresh device (one-device-at-a-time).
 
 ## 🔜 Next core screens (buildable now, sample data)
 
@@ -120,9 +124,18 @@ projects, builder, ideas, milestones, analytics, vault, billing.
   for the 3-day trial → Frame Pro. The Billing section in Settings is mock today
   (`lib/billing/*`); swap the store for Stripe and the screen stays. Gate Pro-only
   features behind the plan once accounts exist.
-- **Connect your channel → live analytics** — real daily views & subscriber
-  growth feeding the Progress line graph (YouTube Data API; public stats need a
-  key, retention needs owner OAuth).
+- **Connect your channel → live analytics** — ✅ CODE BUILT (read-only owner
+  OAuth). `lib/youtube/owner.ts` (auth URL, token exchange/refresh, channel
+  stats, daily views via the YouTube Analytics API), `lib/youtube/tokens.ts` +
+  `lib/supabase/admin.ts` (service-role store), `app/api/youtube/*`
+  (connect / callback / status / daily-views / disconnect), and
+  `components/analytics/ConnectChannelCard.tsx` on Progress (shows live daily
+  views when connected). Fully gated — runs key-free, falls back to manual.
+  **To go live (3 steps):** (1) run `supabase/youtube_tokens.sql` in Supabase;
+  (2) add `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` + `SUPABASE_SERVICE_ROLE_KEY`
+  to `.env.local` AND Vercel; (3) Google Cloud project **CreatorForge** already
+  has the OAuth client, consent screen (Testing/External), test users, and both
+  YouTube APIs set up — redirect URIs include `/api/youtube/callback`.
 - **Reply to comments in-app** — YouTube OAuth write scope. **Every reply must
   require explicit user approval before posting.** Build last.
 

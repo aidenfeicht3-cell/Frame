@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { STORAGE_KEYS } from "@/lib/storage";
+import { SYNC_EVENT, type SyncedDetail } from "@/lib/sync/event";
 import {
   getEditingSetup,
   getProjects,
@@ -28,6 +30,15 @@ export function useBuilder() {
     setProjects(getProjects());
     setEditingSetup(getEditingSetup());
     setLoaded(true);
+
+    // Re-read when cloud sync pulls fresh builder data from another device.
+    const onSynced = (e: Event) => {
+      const key = (e as CustomEvent<SyncedDetail>).detail?.key;
+      if (key === STORAGE_KEYS.videoProjects) setProjects(getProjects());
+      if (key === STORAGE_KEYS.editingSetup) setEditingSetup(getEditingSetup());
+    };
+    window.addEventListener(SYNC_EVENT, onSynced);
+    return () => window.removeEventListener(SYNC_EVENT, onSynced);
   }, []);
 
   useEffect(() => {

@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { STORAGE_KEYS } from "@/lib/storage";
+import { SYNC_EVENT, type SyncedDetail } from "@/lib/sync/event";
 import { getMilestones, saveMilestones } from "./store";
 import type { Milestone } from "./types";
 
@@ -18,6 +20,15 @@ export function useMilestones() {
   useEffect(() => {
     setMilestones(getMilestones());
     setLoaded(true);
+
+    // Re-read when cloud sync pulls fresh milestones from another device.
+    const onSynced = (e: Event) => {
+      if ((e as CustomEvent<SyncedDetail>).detail?.key === STORAGE_KEYS.milestones) {
+        setMilestones(getMilestones());
+      }
+    };
+    window.addEventListener(SYNC_EVENT, onSynced);
+    return () => window.removeEventListener(SYNC_EVENT, onSynced);
   }, []);
 
   useEffect(() => {
